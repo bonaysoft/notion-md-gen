@@ -20,4 +20,4 @@ COPY . .
 # Build the Go app
 RUN go build -o ./bin/cli cmd/cli/main.go
 
-ENTRYPOINT ["./usr/src/app/bin/cli"]
+ENTRYPOINT ["/usr/src/app/bin/cli"]
