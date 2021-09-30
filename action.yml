@@ -8,10 +8,10 @@ inputs:
   database-id:
     description: ID of the Notion database of the blog.
     required: true
-  content-directory:
+  content-folder:
     description: Directory in which the hugo content will be generated.
     required: true
-  images-directory:
+  images-folder:
     description: Directory in which the static images will be stored.
     required: true
   images-source:
@@ -32,10 +32,10 @@ runs:
   args:
     - -database-id
     - ${{ inputs.database-id }}
-    - -content-directory
-    - ${{ inputs.content-directory }}
-    - -images-directory
-    - ${{ inputs.images-directory }}
+    - -content-folder
+    - ${{ inputs.content-folder }}
+    - -images-folder
+    - ${{ inputs.images-folder }}
     - -images-source
     - ${{ inputs.images-source }}
     - -filter-prop
