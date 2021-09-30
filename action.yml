@@ -1,0 +1,44 @@
+name: notion-blog
+author: xzebra
+description: Notion blog articles database to hugo-style markdown.
+branding:
+  icon: inbox
+  color: black
+inputs:
+  database-id:
+    description: ID of the Notion database of the blog.
+    required: true
+  content-directory:
+    description: Directory in which the hugo content will be generated.
+    required: true
+  images-directory:
+    description: Directory in which the static images will be stored.
+    required: true
+  images-source:
+    description: URL beggining to link the static images.
+    required: true
+  filter-prop:
+    description: Property of the filter to apply to a select value of the articles.
+    required: false
+    default: ''
+  filter-value:
+    description: Value of the filter to apply to the Notion articles database.
+    required: false
+    default: ''
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - -database-id
+    - ${{ inputs.database-id }}
+    - -content-directory
+    - ${{ inputs.content-directory }}
+    - -images-directory
+    - ${{ inputs.images-directory }}
+    - -images-source
+    - ${{ inputs.images-source }}
+    - -filter-prop
+    - ${{ inputs.filter-prop }}
+    - -filter-value
+    - ${{ inputs.filter-value }}
