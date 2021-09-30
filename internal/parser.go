@@ -47,11 +47,19 @@ func generateArticleName(title string, date time.Time) string {
 
 func ParseAndGenerate(config notion_blog.BlogConfig) {
 	client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_SECRET")))
-	q, _ := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
+	q, err := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
 		&notionapi.DatabaseQueryRequest{
 			PropertyFilter: filterFromConfig(config),
 			PageSize:       100,
 		})
+	if err != nil {
+		log.Fatalf("couldn't query articles database: %s", err)
+	}
+
+	err = os.MkdirAll(config.ContentFolder, 0777)
+	if err != nil {
+		log.Fatalf("couldn't create content folder: %s", err)
+	}
 
 	for _, res := range q.Results {
 		title := notion_blog.ConvertRichText(res.Properties["Name"].(*notionapi.TitleProperty).Title)

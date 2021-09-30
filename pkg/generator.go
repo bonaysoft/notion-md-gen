@@ -97,16 +97,20 @@ func GenerateHeader(w io.Writer, p notionapi.Page) {
 	title := p.Properties["Name"].(*notionapi.TitleProperty).Title
 	createdBy := p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name
 	categories := p.Properties["Tags"].(*notionapi.MultiSelectProperty).MultiSelect
-	categoriesStr := make([]string, len(categories))
+	categoriesStr := "["
 	for i, cat := range categories {
-		categoriesStr[i] = cat.Name
+		categoriesStr += fmt.Sprintf("%q", cat.Name)
+		if i < len(categories)-1 {
+			categoriesStr += ", "
+		}
 	}
+	categoriesStr += "]"
 
 	fmt.Fprintln(w, "+++")
 	fmt.Fprintf(w, "title = %q\n", ConvertRichText(title))
 	fmt.Fprintf(w, "date = %s\n", p.CreatedTime.Format("2006-01-02"))
 	fmt.Fprintf(w, "lastmod = %s\n", p.LastEditedTime.Format("2006-01-02T15:04:05+07:00"))
-	fmt.Fprintf(w, "categories = %q\n", categoriesStr)
+	fmt.Fprintf(w, "categories = %s\n", categoriesStr)
 	fmt.Fprintln(w, "draft = false")
 	fmt.Fprintf(w, "author = %q\n", createdBy)
 	fmt.Fprintln(w, "type = \"post\"")
