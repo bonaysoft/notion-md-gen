@@ -14,7 +14,7 @@ inputs:
   images-folder:
     description: Directory in which the static images will be stored.
     required: true
-  images-source:
+  images-link:
     description: URL beggining to link the static images.
     required: true
   filter-prop:
@@ -36,8 +36,8 @@ runs:
     - ${{ inputs.content-folder }}
     - -images-folder
     - ${{ inputs.images-folder }}
-    - -images-source
-    - ${{ inputs.images-source }}
+    - -images-link
+    - ${{ inputs.images-link }}
     - -filter-prop
     - ${{ inputs.filter-prop }}
     - -filter-value
