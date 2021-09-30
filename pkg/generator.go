@@ -1,4 +1,4 @@
-package main
+package notion_blog
 
 import (
 	"bytes"
@@ -43,7 +43,7 @@ func emphFormat(a *notionapi.Annotations) (s string) {
 	return s
 }
 
-func convertRich(t notionapi.RichText) string {
+func ConvertRich(t notionapi.RichText) string {
 	switch t.Type {
 	case notionapi.ObjectTypeText:
 		if t.Text.Link != "" {
@@ -58,16 +58,16 @@ func convertRich(t notionapi.RichText) string {
 	return ""
 }
 
-func convertRichText(t []notionapi.RichText) string {
+func ConvertRichText(t []notionapi.RichText) string {
 	buf := &bytes.Buffer{}
 	for _, word := range t {
-		buf.WriteString(convertRich(word))
+		buf.WriteString(ConvertRich(word))
 	}
 
 	return buf.String()
 }
 
-func getImage(url string) (string, error) {
+func getImage(url string, config BlogConfig) (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("couldn't download image: %s", err)
@@ -98,7 +98,7 @@ func GenerateHeader(w io.Writer, p notionapi.Page) {
 	}
 
 	fmt.Fprintln(w, "+++")
-	fmt.Fprintf(w, "title = %q\n", convertRichText(title))
+	fmt.Fprintf(w, "title = %q\n", ConvertRichText(title))
 	fmt.Fprintf(w, "date = %s\n", p.CreatedTime.Format("2006-01-02"))
 	fmt.Fprintf(w, "lastmod = %s\n", p.LastEditedTime.Format("2006-01-02T15:04:05+07:00"))
 	fmt.Fprintf(w, "categories = %q\n", categoriesStr)
@@ -120,7 +120,7 @@ func GenerateHeader(w io.Writer, p notionapi.Page) {
 	// +++
 }
 
-func Generate(w io.Writer, blocks []notionapi.Block) {
+func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
 	if len(blocks) == 0 {
 		return
 	}
@@ -129,43 +129,33 @@ func Generate(w io.Writer, blocks []notionapi.Block) {
 		switch b := block.(type) {
 		case *notionapi.ParagraphBlock:
 			log.Println("paragraph")
-			fmt.Fprintln(w, convertRichText(b.Paragraph.Text))
+			fmt.Fprintln(w, ConvertRichText(b.Paragraph.Text))
 			fmt.Fprintln(w)
-			Generate(w, b.Paragraph.Children)
+			Generate(w, b.Paragraph.Children, config)
 		case *notionapi.Heading1Block:
 			log.Println("heading")
-			fmt.Fprintf(w, "# %s\n", convertRichText(b.Heading1.Text))
+			fmt.Fprintf(w, "# %s\n", ConvertRichText(b.Heading1.Text))
 		case *notionapi.Heading2Block:
 			log.Println("heading")
-			fmt.Fprintf(w, "## %s\n", convertRichText(b.Heading2.Text))
+			fmt.Fprintf(w, "## %s\n", ConvertRichText(b.Heading2.Text))
 		case *notionapi.Heading3Block:
 			log.Println("heading")
-			fmt.Fprintf(w, "### %s\n", convertRichText(b.Heading3.Text))
+			fmt.Fprintf(w, "### %s\n", ConvertRichText(b.Heading3.Text))
 		case *notionapi.BulletedListItemBlock:
-			fmt.Fprintf(w, "- %s\n", convertRichText(b.BulletedListItem.Text))
-			Generate(w, b.BulletedListItem.Children)
+			fmt.Fprintf(w, "- %s\n", ConvertRichText(b.BulletedListItem.Text))
+			Generate(w, b.BulletedListItem.Children, config)
 		case *notionapi.NumberedListItemBlock:
-			fmt.Fprintf(w, "1. %s\n", convertRichText(b.NumberedListItem.Text))
-			Generate(w, b.NumberedListItem.Children)
+			fmt.Fprintf(w, "1. %s\n", ConvertRichText(b.NumberedListItem.Text))
+			Generate(w, b.NumberedListItem.Children, config)
 		case *notionapi.ImageBlock:
 			log.Println(b.Image.File.URL)
-			src, err := getImage(b.Image.File.URL)
+			src, err := getImage(b.Image.File.URL, config)
 			if err != nil {
 				log.Println("error getting image:", err)
 			}
-			fmt.Fprintf(w, "![%s](%s)\n\n", convertRichText(b.Image.Caption), src)
+			fmt.Fprintf(w, "![%s](%s)\n\n", ConvertRichText(b.Image.Caption), src)
 		default:
 			log.Println("unknown", block.GetType())
-			// case notion.BlockTypeHeading2:
-			// 	fmt.Fprintf(w, "## %s\n", convertRichText(block.Heading2.Text))
-			// case notion.BlockTypeHeading3:
-			// 	fmt.Fprintf(w, "### %s\n", convertRichText(block.Heading3.Text))
-			// case notion.BlockTypeBulletedListItem:
-			// case notion.BlockTypeNumberedListItem:
-			// case notion.BlockTypeToDo:
-			// case notion.BlockTypeToggle:
-			// case notion.BlockTypeChildPage:
-			// case notion.BlockTypeUnsupported:
 		}
 	}
 }
