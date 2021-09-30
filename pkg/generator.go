@@ -76,6 +76,11 @@ func getImage(url string, config BlogConfig) (string, error) {
 
 	name := url[strings.LastIndex(url, "/")+1 : strings.Index(url, "?")]
 
+	err = os.MkdirAll(config.ImagesFolder, 0777)
+	if err != nil {
+		return "", fmt.Errorf("couldn't create images folder: %s", err)
+	}
+
 	// Create the file
 	out, err := os.Create(filepath.Join(config.ImagesFolder, name))
 	if err != nil {
