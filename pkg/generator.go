@@ -134,37 +134,57 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
 		return
 	}
 
+	numberedList := false
+	bulletedList := false
+
 	for _, block := range blocks {
+		// Add line break after list is finished
+		if bulletedList && block.GetType() != notionapi.BlockTypeBulletedListItem {
+			bulletedList = false
+			fmt.Fprintln(w)
+		}
+		if numberedList && block.GetType() != notionapi.BlockTypeNumberedListItem {
+			numberedList = false
+			fmt.Fprintln(w)
+		}
+
 		switch b := block.(type) {
 		case *notionapi.ParagraphBlock:
-			log.Println("paragraph")
 			fmt.Fprintln(w, ConvertRichText(b.Paragraph.Text))
 			fmt.Fprintln(w)
 			Generate(w, b.Paragraph.Children, config)
 		case *notionapi.Heading1Block:
-			log.Println("heading")
 			fmt.Fprintf(w, "# %s\n", ConvertRichText(b.Heading1.Text))
 		case *notionapi.Heading2Block:
-			log.Println("heading")
 			fmt.Fprintf(w, "## %s\n", ConvertRichText(b.Heading2.Text))
 		case *notionapi.Heading3Block:
-			log.Println("heading")
 			fmt.Fprintf(w, "### %s\n", ConvertRichText(b.Heading3.Text))
 		case *notionapi.BulletedListItemBlock:
+			bulletedList = true
 			fmt.Fprintf(w, "- %s\n", ConvertRichText(b.BulletedListItem.Text))
 			Generate(w, b.BulletedListItem.Children, config)
 		case *notionapi.NumberedListItemBlock:
+			numberedList = true
 			fmt.Fprintf(w, "1. %s\n", ConvertRichText(b.NumberedListItem.Text))
 			Generate(w, b.NumberedListItem.Children, config)
 		case *notionapi.ImageBlock:
-			log.Println(b.Image.File.URL)
 			src, err := getImage(b.Image.File.URL, config)
 			if err != nil {
 				log.Println("error getting image:", err)
 			}
 			fmt.Fprintf(w, "![%s](%s)\n\n", ConvertRichText(b.Image.Caption), src)
+		case *notionapi.CodeBlock:
+			fmt.Fprintf(w, "```%s\n", b.Code.Language)
+			fmt.Fprintln(w, ConvertRichText(b.Code.Text))
+			fmt.Fprintln(w, "```")
+		case *notionapi.UnsupportedBlock:
+			if b.GetType() != "unsupported" {
+				log.Println("unimplemented", block.GetType())
+			} else {
+				log.Println("unsupported block type")
+			}
 		default:
-			log.Println("unknown", block.GetType())
+			log.Println("unimplemented", block.GetType())
 		}
 	}
 }
