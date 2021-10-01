@@ -3,6 +3,7 @@
 	"imagesLink": "images/",
 	"imagesFolder": "web/static/images",
 	"contentFolder": "web/content",
+	"archetypeFile": "web/archetypes/blog.md",
 	"filterProp": "Status",
 	"filterValue": "Finished ✅"
 }
