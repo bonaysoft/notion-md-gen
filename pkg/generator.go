@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/jomei/notionapi"
 )
@@ -93,40 +94,27 @@ func getImage(url string, config BlogConfig) (string, error) {
 	return filepath.Join(config.ImagesLink, name), err
 }
 
-func GenerateHeader(w io.Writer, p notionapi.Page) {
-	title := p.Properties["Name"].(*notionapi.TitleProperty).Title
-	createdBy := p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name
-	categories := p.Properties["Tags"].(*notionapi.MultiSelectProperty).MultiSelect
-	categoriesStr := "["
-	for i, cat := range categories {
-		categoriesStr += fmt.Sprintf("%q", cat.Name)
-		if i < len(categories)-1 {
-			categoriesStr += ", "
-		}
+func GenerateHeader(w io.Writer, p notionapi.Page, config BlogConfig) {
+	t, err := template.ParseFiles(config.ArchetypeFile)
+	if err != nil {
+		log.Fatalf("error parsing archetype file: %s", err)
 	}
-	categoriesStr += "]"
 
-	fmt.Fprintln(w, "+++")
-	fmt.Fprintf(w, "title = %q\n", ConvertRichText(title))
-	fmt.Fprintf(w, "date = %s\n", p.CreatedTime.Format("2006-01-02"))
-	fmt.Fprintf(w, "lastmod = %s\n", p.LastEditedTime.Format("2006-01-02T15:04:05+07:00"))
-	fmt.Fprintf(w, "categories = %s\n", categoriesStr)
-	fmt.Fprintln(w, "draft = false")
-	fmt.Fprintf(w, "author = %q\n", createdBy)
-	fmt.Fprintln(w, "type = \"post\"")
-	// fmt.Fprintf(w, "description = %v", categoriesStr)
-	fmt.Fprintln(w, "+++")
-	fmt.Fprintln(w)
-	// +++
-	// title = "Local item data"
-	// date = 2019-09-11
-	// lastmod = 2020-01-31T23:40:58+00:00
-	// categories = ["version", "0.7.6"]
-	// draft = false
-	// description = "Item info stored locally. No need to update the whole game to modify items."
-	// author = "Zebra"
-	// type = "post"
-	// +++
+	err = t.Execute(w, ArchetypeFields{
+		Title: ConvertRichText(p.Properties["Name"].(*notionapi.TitleProperty).Title),
+		// Description:  ConvertRichText(p.Properties["Description"].(*notionapi.TextProperty).Text),
+		Description:  "",
+		Banner:       "",
+		CreationDate: p.CreatedTime,
+		LastModified: p.LastEditedTime,
+		Author:       p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name,
+		Tags:         p.Properties["Tags"].(*notionapi.MultiSelectProperty).MultiSelect,
+		// Categories:   p.Properties["Categories"].(*notionapi.MultiSelectProperty).MultiSelect,
+		Categories: []notionapi.Option{},
+	})
+	if err != nil {
+		log.Fatalf("error filling archetype file: %s", err)
+	}
 }
 
 func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
