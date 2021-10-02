@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	"github.com/jomei/notionapi"
 )
@@ -93,40 +94,65 @@ func getImage(url string, config BlogConfig) (string, error) {
 	return filepath.Join(config.ImagesLink, name), err
 }
 
-func GenerateHeader(w io.Writer, p notionapi.Page) {
-	title := p.Properties["Name"].(*notionapi.TitleProperty).Title
-	createdBy := p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name
-	categories := p.Properties["Tags"].(*notionapi.MultiSelectProperty).MultiSelect
-	categoriesStr := "["
-	for i, cat := range categories {
-		categoriesStr += fmt.Sprintf("%q", cat.Name)
-		if i < len(categories)-1 {
-			categoriesStr += ", "
+func makeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
+	// Initialize first default Notion page fields
+	a := ArchetypeFields{
+		Title:        ConvertRichText(p.Properties["Name"].(*notionapi.TitleProperty).Title),
+		CreationDate: p.CreatedTime,
+		LastModified: p.LastEditedTime,
+		Author:       p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name,
+	}
+
+	a.Banner = ""
+	if p.Cover.URL != "" {
+		coverSrc, err := getImage(p.Cover.URL, config)
+		if err != nil {
+			log.Println("couldn't download cover:", err)
+		}
+		a.Banner = coverSrc
+	}
+
+	// Custom fields
+	if v, ok := p.Properties[config.PropertyDescription]; ok {
+		text, ok := v.(*notionapi.RichTextProperty)
+		if ok {
+			a.Description = ConvertRichText(text.RichText)
+		} else {
+			log.Println("warning: given property description is not a text property")
 		}
 	}
-	categoriesStr += "]"
 
-	fmt.Fprintln(w, "+++")
-	fmt.Fprintf(w, "title = %q\n", ConvertRichText(title))
-	fmt.Fprintf(w, "date = %s\n", p.CreatedTime.Format("2006-01-02"))
-	fmt.Fprintf(w, "lastmod = %s\n", p.LastEditedTime.Format("2006-01-02T15:04:05+07:00"))
-	fmt.Fprintf(w, "categories = %s\n", categoriesStr)
-	fmt.Fprintln(w, "draft = false")
-	fmt.Fprintf(w, "author = %q\n", createdBy)
-	fmt.Fprintln(w, "type = \"post\"")
-	// fmt.Fprintf(w, "description = %v", categoriesStr)
-	fmt.Fprintln(w, "+++")
-	fmt.Fprintln(w)
-	// +++
-	// title = "Local item data"
-	// date = 2019-09-11
-	// lastmod = 2020-01-31T23:40:58+00:00
-	// categories = ["version", "0.7.6"]
-	// draft = false
-	// description = "Item info stored locally. No need to update the whole game to modify items."
-	// author = "Zebra"
-	// type = "post"
-	// +++
+	if v, ok := p.Properties[config.PropertyCategories]; ok {
+		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
+		if ok {
+			a.Categories = multiSelect.MultiSelect
+		} else {
+			log.Println("warning: given property categories is not a multi-select property")
+		}
+	}
+
+	if v, ok := p.Properties[config.PropertyTags]; ok {
+		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
+		if ok {
+			a.Tags = multiSelect.MultiSelect
+		} else {
+			log.Println("warning: given property tags is not a multi-select property")
+		}
+	}
+
+	return a
+}
+
+func GenerateHeader(w io.Writer, p notionapi.Page, config BlogConfig) {
+	t, err := template.ParseFiles(config.ArchetypeFile)
+	if err != nil {
+		log.Fatalf("error parsing archetype file: %s", err)
+	}
+
+	err = t.Execute(w, makeArchetypeFields(p, config))
+	if err != nil {
+		log.Fatalf("error filling archetype file: %s", err)
+	}
 }
 
 func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
@@ -134,37 +160,57 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
 		return
 	}
 
+	numberedList := false
+	bulletedList := false
+
 	for _, block := range blocks {
+		// Add line break after list is finished
+		if bulletedList && block.GetType() != notionapi.BlockTypeBulletedListItem {
+			bulletedList = false
+			fmt.Fprintln(w)
+		}
+		if numberedList && block.GetType() != notionapi.BlockTypeNumberedListItem {
+			numberedList = false
+			fmt.Fprintln(w)
+		}
+
 		switch b := block.(type) {
 		case *notionapi.ParagraphBlock:
-			log.Println("paragraph")
 			fmt.Fprintln(w, ConvertRichText(b.Paragraph.Text))
 			fmt.Fprintln(w)
 			Generate(w, b.Paragraph.Children, config)
 		case *notionapi.Heading1Block:
-			log.Println("heading")
 			fmt.Fprintf(w, "# %s\n", ConvertRichText(b.Heading1.Text))
 		case *notionapi.Heading2Block:
-			log.Println("heading")
 			fmt.Fprintf(w, "## %s\n", ConvertRichText(b.Heading2.Text))
 		case *notionapi.Heading3Block:
-			log.Println("heading")
 			fmt.Fprintf(w, "### %s\n", ConvertRichText(b.Heading3.Text))
 		case *notionapi.BulletedListItemBlock:
+			bulletedList = true
 			fmt.Fprintf(w, "- %s\n", ConvertRichText(b.BulletedListItem.Text))
 			Generate(w, b.BulletedListItem.Children, config)
 		case *notionapi.NumberedListItemBlock:
+			numberedList = true
 			fmt.Fprintf(w, "1. %s\n", ConvertRichText(b.NumberedListItem.Text))
 			Generate(w, b.NumberedListItem.Children, config)
 		case *notionapi.ImageBlock:
-			log.Println(b.Image.File.URL)
 			src, err := getImage(b.Image.File.URL, config)
 			if err != nil {
 				log.Println("error getting image:", err)
 			}
 			fmt.Fprintf(w, "![%s](%s)\n\n", ConvertRichText(b.Image.Caption), src)
+		case *notionapi.CodeBlock:
+			fmt.Fprintf(w, "```%s\n", b.Code.Language)
+			fmt.Fprintln(w, ConvertRichText(b.Code.Text))
+			fmt.Fprintln(w, "```")
+		case *notionapi.UnsupportedBlock:
+			if b.GetType() != "unsupported" {
+				log.Println("unimplemented", block.GetType())
+			} else {
+				log.Println("unsupported block type")
+			}
 		default:
-			log.Println("unknown", block.GetType())
+			log.Println("unimplemented", block.GetType())
 		}
 	}
 }

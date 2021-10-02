@@ -2,6 +2,9 @@ module notion-blog
 
 go 1.17
 
+replace github.com/jomei/notionapi => github.com/xzebra/notionapi main
+// replace github.com/jomei/notionapi => ../notionapi
+
 require (
 	github.com/itzg/go-flagsfiller v1.5.0
 	github.com/joho/godotenv v1.4.0

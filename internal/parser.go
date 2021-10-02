@@ -40,7 +40,7 @@ func generateArticleName(title string, date time.Time) string {
 				strings.ToLower(title),
 				"",
 			),
-			" ", "",
+			" ", "_",
 		),
 	)
 }
@@ -77,7 +77,7 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 			generateArticleName(title, res.CreatedTime),
 		))
 
-		notion_blog.GenerateHeader(f, res)
+		notion_blog.GenerateHeader(f, res, config)
 		notion_blog.Generate(f, blocks.Results, config)
 
 		f.Close()
