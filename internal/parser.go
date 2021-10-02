@@ -45,6 +45,28 @@ func generateArticleName(title string, date time.Time) string {
 	)
 }
 
+func changeStatus(client *notionapi.Client, p notionapi.Page, config notion_blog.BlogConfig) {
+	if config.FilterProp == "" || config.PublishedValue == "" {
+		return
+	}
+
+	updatedProps := make(notionapi.Properties)
+	updatedProps[config.FilterProp] = notionapi.SelectProperty{
+		Select: notionapi.Option{
+			Name: config.PublishedValue,
+		},
+	}
+
+	_, err := client.Page.Update(context.Background(), notionapi.PageID(p.ID),
+		&notionapi.PageUpdateRequest{
+			Properties: updatedProps,
+		},
+	)
+	if err != nil {
+		log.Println("error changing status:", err)
+	}
+}
+
 func ParseAndGenerate(config notion_blog.BlogConfig) {
 	client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_SECRET")))
 	q, err := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
@@ -79,6 +101,7 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 
 		notion_blog.GenerateHeader(f, res, config)
 		notion_blog.Generate(f, blocks.Results, config)
+		changeStatus(client, res, config)
 
 		f.Close()
 	}
