@@ -10,10 +10,11 @@ type BlogConfig struct {
 
 	// Optional:
 
-	PropertyDescription string `usage:"Description porperty name in Notion."`
+	PropertyDescription string `usage:"Description property name in Notion."`
 	PropertyTags        string `usage:"Tags multi-select porperty name in Notion."`
 	PropertyCategories  string `usage:"Categories multi-select porperty name in Notion."`
 
 	FilterProp     string `usage:"Property of the filter to apply to a select value of the articles."`
 	FilterValue    string `usage:"Value of the filter to apply to the Notion articles database."`
+	PublishedValue string `usage:"Value to which the filter property will be set after generating the content."`
 }

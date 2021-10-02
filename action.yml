@@ -69,3 +69,5 @@ runs:
     - ${{ inputs.filter-prop }}
     - -filter-value
     - ${{ inputs.filter-value }}
+    - -published-value
+    - ${{ inputs.published-value }}
