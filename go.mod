@@ -2,7 +2,8 @@ module notion-blog
 
 go 1.17
 
-replace github.com/jomei/notionapi => github.com/xzebra/notionapi main
+replace github.com/jomei/notionapi => github.com/xzebra/notionapi v1.6.1-0.20211002174422-df3b8ecd7781
+
 // replace github.com/jomei/notionapi => ../notionapi
 
 require (
