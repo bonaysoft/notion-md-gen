@@ -40,7 +40,7 @@ func generateArticleName(title string, date time.Time) string {
 				strings.ToLower(title),
 				"",
 			),
-			" ", "",
+			" ", "_",
 		),
 	)
 }

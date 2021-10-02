@@ -94,24 +94,62 @@ func getImage(url string, config BlogConfig) (string, error) {
 	return filepath.Join(config.ImagesLink, name), err
 }
 
+func makeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
+	// Initialize first default Notion page fields
+	a := ArchetypeFields{
+		Title:        ConvertRichText(p.Properties["Name"].(*notionapi.TitleProperty).Title),
+		CreationDate: p.CreatedTime,
+		LastModified: p.LastEditedTime,
+		Author:       p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name,
+	}
+
+	a.Banner = ""
+	if p.Cover.URL != "" {
+		coverSrc, err := getImage(p.Cover.URL, config)
+		if err != nil {
+			log.Println("couldn't download cover:", err)
+		}
+		a.Banner = coverSrc
+	}
+
+	// Custom fields
+	if v, ok := p.Properties[config.PropertyDescription]; ok {
+		text, ok := v.(*notionapi.RichTextProperty)
+		if ok {
+			a.Description = ConvertRichText(text.RichText)
+		} else {
+			log.Println("warning: given property description is not a text property")
+		}
+	}
+
+	if v, ok := p.Properties[config.PropertyCategories]; ok {
+		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
+		if ok {
+			a.Categories = multiSelect.MultiSelect
+		} else {
+			log.Println("warning: given property categories is not a multi-select property")
+		}
+	}
+
+	if v, ok := p.Properties[config.PropertyTags]; ok {
+		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
+		if ok {
+			a.Tags = multiSelect.MultiSelect
+		} else {
+			log.Println("warning: given property tags is not a multi-select property")
+		}
+	}
+
+	return a
+}
+
 func GenerateHeader(w io.Writer, p notionapi.Page, config BlogConfig) {
 	t, err := template.ParseFiles(config.ArchetypeFile)
 	if err != nil {
 		log.Fatalf("error parsing archetype file: %s", err)
 	}
 
-	err = t.Execute(w, ArchetypeFields{
-		Title: ConvertRichText(p.Properties["Name"].(*notionapi.TitleProperty).Title),
-		// Description:  ConvertRichText(p.Properties["Description"].(*notionapi.TextProperty).Text),
-		Description:  "",
-		Banner:       "",
-		CreationDate: p.CreatedTime,
-		LastModified: p.LastEditedTime,
-		Author:       p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name,
-		Tags:         p.Properties["Tags"].(*notionapi.MultiSelectProperty).MultiSelect,
-		// Categories:   p.Properties["Categories"].(*notionapi.MultiSelectProperty).MultiSelect,
-		Categories: []notionapi.Option{},
-	})
+	err = t.Execute(w, makeArchetypeFields(p, config))
 	if err != nil {
 		log.Fatalf("error filling archetype file: %s", err)
 	}

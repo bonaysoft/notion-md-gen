@@ -8,6 +8,12 @@ type BlogConfig struct {
 	ContentFolder string `usage:"URL beggining to link the static images. E.g.: /images"`
 	ArchetypeFile string `usage:"Route to the archetype file to generate the header."`
 
-	FilterProp  string `usage:"Property of the filter to apply to a select value of the articles."`
-	FilterValue string `usage:"Value of the filter to apply to the Notion articles database."`
+	// Optional:
+
+	PropertyDescription string `usage:"Description porperty name in Notion."`
+	PropertyTags        string `usage:"Tags multi-select porperty name in Notion."`
+	PropertyCategories  string `usage:"Categories multi-select porperty name in Notion."`
+
+	FilterProp     string `usage:"Property of the filter to apply to a select value of the articles."`
+	FilterValue    string `usage:"Value of the filter to apply to the Notion articles database."`
 }

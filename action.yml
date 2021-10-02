@@ -20,12 +20,28 @@ inputs:
   images-link:
     description: URL beggining to link the static images.
     required: true
+  property-description:
+    description: Description property name in Notion.
+    required: false
+    default: ''
+  property-tags:
+    description: Tags multi-select porperty name in Notion.
+    required: false
+    default: ''
+  property-categories:
+    description: Categories multi-select porperty name in Notion.
+    required: false
+    default: ''
   filter-prop:
     description: Property of the filter to apply to a select value of the articles.
     required: false
     default: ''
   filter-value:
     description: Value of the filter to apply to the Notion articles database.
+    required: false
+    default: ''
+  published-value:
+    description: Value to which the filter property will be set after generating the content.
     required: false
     default: ''
 
@@ -37,10 +53,16 @@ runs:
     - ${{ inputs.database-id }}
     - -content-folder
     - ${{ inputs.content-folder }}
-    - -archetype-file
-    - ${{ inputs.archetype-file }}
     - -images-folder
     - ${{ inputs.images-folder }}
+    - -archetype-file
+    - ${{ inputs.archetype-file }}
+    - -property-description
+    - ${{ inputs.property-description }}
+    - -property-tags
+    - ${{ inputs.property-tags }}
+    - -property-categories
+    - ${{ inputs.property-categories }}
     - -images-link
     - ${{ inputs.images-link }}
     - -filter-prop

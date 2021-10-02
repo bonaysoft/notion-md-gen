@@ -1,9 +1,12 @@
 {
 	"databaseID": "f887dfac795547ff97a81bb669b1052f",
-	"imagesLink": "images/",
+	"imagesLink": "/images/posts",
 	"imagesFolder": "web/static/images",
 	"contentFolder": "web/content",
 	"archetypeFile": "web/archetypes/blog.md",
+	"propertyDescription": "Description",
+	"propertyTags": "Tags",
+	"propertyCategories": "Categories",
 	"filterProp": "Status",
 	"filterValue": "Finished ✅"
 }
