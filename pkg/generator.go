@@ -11,6 +11,8 @@ import (
 	"strings"
 	"text/template"
 
+	"net/url"
+
 	"github.com/jomei/notionapi"
 )
 
@@ -68,14 +70,26 @@ func ConvertRichText(t []notionapi.RichText) string {
 	return buf.String()
 }
 
-func getImage(url string, config BlogConfig) (string, error) {
-	resp, err := http.Get(url)
+func getImage(imgURL string, config BlogConfig) (string, error) {
+	// Split image url to get host and file name
+	splittedURL, err := url.Parse(imgURL)
+	if err != nil {
+		return "", fmt.Errorf("malformed url: %s", err)
+	}
+
+	log.Println("getImage", imgURL)
+
+	resp, err := http.Get(imgURL)
 	if err != nil {
 		return "", fmt.Errorf("couldn't download image: %s", err)
 	}
 	defer resp.Body.Close()
 
-	name := url[strings.LastIndex(url, "/")+1 : strings.Index(url, "?")]
+	// Get file name
+	filePath := splittedURL.Path
+	filePath = filePath[strings.LastIndex(filePath, "/")+1:]
+
+	name := fmt.Sprintf("%s_%s", splittedURL.Hostname(), filePath)
 
 	err = os.MkdirAll(config.ImagesFolder, 0777)
 	if err != nil {
@@ -104,8 +118,8 @@ func makeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
 	}
 
 	a.Banner = ""
-	if p.Cover.URL != "" {
-		coverSrc, err := getImage(p.Cover.URL, config)
+	if p.Cover != nil && p.Cover.GetURL() != "" {
+		coverSrc, err := getImage(p.Cover.GetURL(), config)
 		if err != nil {
 			log.Println("couldn't download cover:", err)
 		}
