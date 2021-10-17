@@ -49,7 +49,7 @@ func emphFormat(a *notionapi.Annotations) (s string) {
 func ConvertRich(t notionapi.RichText) string {
 	switch t.Type {
 	case notionapi.ObjectTypeText:
-		if t.Text.Link != "" {
+		if t.Text.Link != nil {
 			return fmt.Sprintf(
 				emphFormat(t.Annotations),
 				fmt.Sprintf("[%s](%s)", t.Text.Content, t.Text.Link),
