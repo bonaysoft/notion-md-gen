@@ -244,12 +244,18 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig, prefixes
 
 		case *notionapi.BulletedListItemBlock:
 			bulletedList = true
-			fmt.Fprintf(w, "- %s\n", ConvertRichText(b.BulletedListItem.Text))
-			Generate(w, b.BulletedListItem.Children, config)
+			fmt.Fprintf(w, "%s- %s\n",
+				strings.Join(prefixes, ""),
+				ConvertRichText(b.BulletedListItem.Text),
+			)
+			Generate(w, b.BulletedListItem.Children, config, append([]string{"    "}, prefixes...)...)
 		case *notionapi.NumberedListItemBlock:
 			numberedList = true
-			fmt.Fprintf(w, "1. %s\n", ConvertRichText(b.NumberedListItem.Text))
-			Generate(w, b.NumberedListItem.Children, config)
+			fmt.Fprintf(w, "%s1. %s\n",
+				strings.Join(prefixes, ""),
+				ConvertRichText(b.NumberedListItem.Text),
+			)
+			Generate(w, b.NumberedListItem.Children, config, append([]string{"    "}, prefixes...)...)
 		case *notionapi.ImageBlock:
 			src, err := getImage(b.Image.File.URL, config)
 			if err != nil {
