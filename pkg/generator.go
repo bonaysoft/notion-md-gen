@@ -237,6 +237,11 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig, prefixes
 				og.Image,
 			)
 			fmt.Fprintln(w)
+
+		case *notionapi.QuoteBlock:
+			fmt.Fprintf(w, "> %s\n", ConvertRichText(b.Quote.Text))
+			Generate(w, b.Quote.Children, config, "> ")
+
 		case *notionapi.BulletedListItemBlock:
 			bulletedList = true
 			fmt.Fprintf(w, "- %s\n", ConvertRichText(b.BulletedListItem.Text))
