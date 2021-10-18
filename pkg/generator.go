@@ -174,20 +174,7 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig, prefixes
 		return
 	}
 
-	numberedList := false
-	bulletedList := false
-
 	for _, block := range blocks {
-		// Add line break after list is finished
-		if bulletedList && block.GetType() != notionapi.BlockTypeBulletedListItem {
-			bulletedList = false
-			fmt.Fprintln(w)
-		}
-		if numberedList && block.GetType() != notionapi.BlockTypeNumberedListItem {
-			numberedList = false
-			fmt.Fprintln(w)
-		}
-
 		switch b := block.(type) {
 		case *notionapi.ParagraphBlock:
 			fmt.Fprintln(w, ConvertRichText(b.Paragraph.Text))
@@ -203,7 +190,6 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig, prefixes
 			if !config.UseShortcodes {
 				continue
 			}
-
 			if b.Callout.Icon != nil {
 				if b.Callout.Icon.Emoji != nil {
 					fmt.Fprintf(w, `{{%% callout emoji="%s" %%}}`, *b.Callout.Icon.Emoji)
@@ -243,14 +229,12 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig, prefixes
 			Generate(w, b.Quote.Children, config, "> ")
 
 		case *notionapi.BulletedListItemBlock:
-			bulletedList = true
 			fmt.Fprintf(w, "%s- %s\n",
 				strings.Join(prefixes, ""),
 				ConvertRichText(b.BulletedListItem.Text),
 			)
 			Generate(w, b.BulletedListItem.Children, config, append([]string{"    "}, prefixes...)...)
 		case *notionapi.NumberedListItemBlock:
-			numberedList = true
 			fmt.Fprintf(w, "%s1. %s\n",
 				strings.Join(prefixes, ""),
 				ConvertRichText(b.NumberedListItem.Text),
