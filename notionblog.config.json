@@ -9,4 +9,5 @@
 	"propertyCategories": "Categories",
 	"filterProp": "Status",
 	"filterValue": "Finished ✅"
+	"useShortcodes": true
 }
