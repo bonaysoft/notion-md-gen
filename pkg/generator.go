@@ -77,8 +77,6 @@ func getImage(imgURL string, config BlogConfig) (string, error) {
 		return "", fmt.Errorf("malformed url: %s", err)
 	}
 
-	log.Println("getImage", imgURL)
-
 	resp, err := http.Get(imgURL)
 	if err != nil {
 		return "", fmt.Errorf("couldn't download image: %s", err)
@@ -90,6 +88,8 @@ func getImage(imgURL string, config BlogConfig) (string, error) {
 	filePath = filePath[strings.LastIndex(filePath, "/")+1:]
 
 	name := fmt.Sprintf("%s_%s", splittedURL.Hostname(), filePath)
+
+	log.Println("getting image", name)
 
 	err = os.MkdirAll(config.ImagesFolder, 0777)
 	if err != nil {
@@ -169,7 +169,7 @@ func GenerateHeader(w io.Writer, p notionapi.Page, config BlogConfig) {
 	}
 }
 
-func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
+func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig, prefixes ...string) {
 	if len(blocks) == 0 {
 		return
 	}
