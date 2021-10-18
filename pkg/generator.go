@@ -215,6 +215,28 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
 			fmt.Fprintln(w, ConvertRichText(b.Callout.Text))
 			Generate(w, b.Callout.Children, config)
 			fmt.Fprintln(w, "{{% /callout %}}")
+
+		case *notionapi.BookmarkBlock:
+			if !config.UseShortcodes {
+				// Simply generate the url link
+				fmt.Fprintf(w, "[%s](%s)\n", b.Bookmark.URL, b.Bookmark.URL)
+				continue
+			}
+			// Parse external page metadata
+			og, err := parseMetadata(b.Bookmark.URL)
+			if err != nil {
+				log.Println("error getting bookmark metadata:", err)
+			}
+
+			// Generate shortcode with given metadata
+			fmt.Fprintf(w,
+				`{{< bookmark url="%s" title="%s" description="%s" img="%s" >}}`,
+				og.URL,
+				og.Title,
+				og.Description,
+				og.Image,
+			)
+			fmt.Fprintln(w)
 		case *notionapi.BulletedListItemBlock:
 			bulletedList = true
 			fmt.Fprintf(w, "- %s\n", ConvertRichText(b.BulletedListItem.Text))
