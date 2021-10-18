@@ -44,6 +44,10 @@ inputs:
     description: Value to which the filter property will be set after generating the content.
     required: false
     default: ''
+  use-shortcodes:
+    description: True if you want to generate shortcodes for unimplemented markdown blocks, such as callout or quote.
+    required: false
+    default: false
 
 runs:
   using: 'docker'
@@ -71,3 +75,5 @@ runs:
     - ${{ inputs.filter-value }}
     - -published-value
     - ${{ inputs.published-value }}
+    - -use-shortcodes
+    - ${{ inputs.use-shortcodes }}
