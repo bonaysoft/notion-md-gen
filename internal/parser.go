@@ -9,8 +9,9 @@ import (
 	"strings"
 	"time"
 
+	notion_blog "notion-blog/pkg"
+
 	"github.com/jomei/notionapi"
-	"notion-blog/pkg"
 )
 
 func filterFromConfig(config notion_blog.BlogConfig) *notionapi.PropertyFilter {
@@ -67,6 +68,41 @@ func changeStatus(client *notionapi.Client, p notionapi.Page, config notion_blog
 	}
 }
 
+func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (blocks []notionapi.Block, err error) {
+	res, err := client.Block.GetChildren(context.Background(), blockID, &notionapi.Pagination{
+		PageSize: 100,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	blocks = res.Results
+	if len(blocks) == 0 {
+		return
+	}
+
+	for _, block := range blocks {
+		switch b := block.(type) {
+		case *notionapi.ParagraphBlock:
+			b.Paragraph.Children, err = recursiveGetChildren(client, b.ID)
+		case *notionapi.CalloutBlock:
+			b.Callout.Children, err = recursiveGetChildren(client, b.ID)
+		case *notionapi.QuoteBlock:
+			b.Quote.Children, err = recursiveGetChildren(client, b.ID)
+		case *notionapi.BulletedListItemBlock:
+			b.BulletedListItem.Children, err = recursiveGetChildren(client, b.ID)
+		case *notionapi.NumberedListItemBlock:
+			b.NumberedListItem.Children, err = recursiveGetChildren(client, b.ID)
+		}
+
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
 func ParseAndGenerate(config notion_blog.BlogConfig) {
 	client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_SECRET")))
 	q, err := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
@@ -86,9 +122,7 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 	for _, res := range q.Results {
 		title := notion_blog.ConvertRichText(res.Properties["Name"].(*notionapi.TitleProperty).Title)
 
-		blocks, err := client.Block.GetChildren(context.Background(), notionapi.BlockID(res.ID), &notionapi.Pagination{
-			PageSize: 100,
-		})
+		blocks, err := recursiveGetChildren(client, notionapi.BlockID(res.ID))
 		if err != nil {
 			log.Println("err:", err)
 			continue
@@ -100,7 +134,7 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 		))
 
 		notion_blog.GenerateHeader(f, res, config)
-		notion_blog.Generate(f, blocks.Results, config)
+		notion_blog.Generate(f, blocks, config)
 		changeStatus(client, res, config)
 
 		f.Close()
