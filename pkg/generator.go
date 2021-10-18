@@ -199,6 +199,22 @@ func Generate(w io.Writer, blocks []notionapi.Block, config BlogConfig) {
 			fmt.Fprintf(w, "## %s\n", ConvertRichText(b.Heading2.Text))
 		case *notionapi.Heading3Block:
 			fmt.Fprintf(w, "### %s\n", ConvertRichText(b.Heading3.Text))
+		case *notionapi.CalloutBlock:
+			if !config.UseShortcodes {
+				continue
+			}
+
+			if b.Callout.Icon != nil {
+				if b.Callout.Icon.Emoji != nil {
+					fmt.Fprintf(w, `{{%% callout emoji="%s" %%}}`, *b.Callout.Icon.Emoji)
+				} else {
+					fmt.Fprintf(w, `{{%% callout image="%s" %%}}`, b.Callout.Icon.GetURL())
+				}
+				fmt.Fprintln(w)
+			}
+			fmt.Fprintln(w, ConvertRichText(b.Callout.Text))
+			Generate(w, b.Callout.Children, config)
+			fmt.Fprintln(w, "{{% /callout %}}")
 		case *notionapi.BulletedListItemBlock:
 			bulletedList = true
 			fmt.Fprintf(w, "- %s\n", ConvertRichText(b.BulletedListItem.Text))
