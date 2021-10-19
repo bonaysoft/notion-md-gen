@@ -15,4 +15,5 @@ type ArchetypeFields struct {
 	Author       string
 	Tags         []notionapi.Option
 	Categories   []notionapi.Option
+	Content      string
 }

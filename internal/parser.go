@@ -122,19 +122,25 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 	for _, res := range q.Results {
 		title := notion_blog.ConvertRichText(res.Properties["Name"].(*notionapi.TitleProperty).Title)
 
+		// Get page blocks tree
 		blocks, err := recursiveGetChildren(client, notionapi.BlockID(res.ID))
 		if err != nil {
 			log.Println("err:", err)
 			continue
 		}
 
+		// Create file
 		f, _ := os.Create(filepath.Join(
 			config.ContentFolder,
 			generateArticleName(title, res.CreatedTime),
 		))
 
-		notion_blog.GenerateHeader(f, res, config)
-		notion_blog.Generate(f, blocks, config)
+		// Generate and dump content to file
+		if err := notion_blog.Generate(f, res, blocks, config); err != nil {
+			f.Close()
+			continue
+		}
+		// Change status of blog post if desired
 		changeStatus(client, res, config)
 
 		f.Close()
