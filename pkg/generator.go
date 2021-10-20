@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -108,58 +109,14 @@ func getImage(imgURL string, config BlogConfig) (string, error) {
 	return filepath.Join(config.ImagesLink, name), err
 }
 
-func MakeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
-	// Initialize first default Notion page fields
-	a := ArchetypeFields{
-		Title:        ConvertRichText(p.Properties["Name"].(*notionapi.TitleProperty).Title),
-		CreationDate: p.CreatedTime,
-		LastModified: p.LastEditedTime,
-		Author:       p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name,
-	}
-
-	a.Banner = ""
-	if p.Cover != nil && p.Cover.GetURL() != "" {
-		coverSrc, err := getImage(p.Cover.GetURL(), config)
-		if err != nil {
-			log.Println("couldn't download cover:", err)
-		}
-		a.Banner = coverSrc
-	}
-
-	// Custom fields
-	if v, ok := p.Properties[config.PropertyDescription]; ok {
-		text, ok := v.(*notionapi.RichTextProperty)
-		if ok {
-			a.Description = ConvertRichText(text.RichText)
-		} else {
-			log.Println("warning: given property description is not a text property")
-		}
-	}
-
-	if v, ok := p.Properties[config.PropertyCategories]; ok {
-		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
-		if ok {
-			a.Categories = multiSelect.MultiSelect
-		} else {
-			log.Println("warning: given property categories is not a multi-select property")
-		}
-	}
-
-	if v, ok := p.Properties[config.PropertyTags]; ok {
-		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
-		if ok {
-			a.Tags = multiSelect.MultiSelect
-		} else {
-			log.Println("warning: given property tags is not a multi-select property")
-		}
-	}
-
-	return a
-}
-
 func Generate(w io.Writer, page notionapi.Page, blocks []notionapi.Block, config BlogConfig) error {
 	// Parse template file
-	t, err := template.ParseFiles(config.ArchetypeFile)
+	t := template.New(path.Base(config.ArchetypeFile)).Delims("[[", "]]")
+	t.Funcs(template.FuncMap{
+		"rich": ConvertRichText,
+	})
+
+	t, err := t.ParseFiles(config.ArchetypeFile)
 	if err != nil {
 		return fmt.Errorf("error parsing archetype file: %s", err)
 	}
