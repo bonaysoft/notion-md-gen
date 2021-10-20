@@ -10,6 +10,8 @@ github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334 h1:VHgatEHNcBFE
 github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334/go.mod h1:SK73tn/9oHe+/Y0h39VT4UCxmurVJkR5NA7kMEAOgSE=
 github.com/itzg/go-flagsfiller v1.5.0 h1:HX74WaTBImdPh++rIznRJMA7jop/erCbwz9CzQ9kz/Q=
 github.com/itzg/go-flagsfiller v1.5.0/go.mod h1:mfQgTahSs4OHn8PYev2Wwi1LJXUiYiGuZVCpBLxzbYs=
+github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394 h1:X8X7KPD2Gfk34zCn4C47e5UxUK72Oz8sBpe6aiN1gZE=
+github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394/go.mod h1:Z8lFST9wVOwMDDBpMpCCnpk93WKTb+UWT/4TTUxWZzA=
 github.com/joho/godotenv v1.4.0 h1:3l4+N6zfMWnkbPEXKng2o2/MR5mSwTrBih4ZEkkz1lg=
 github.com/joho/godotenv v1.4.0/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/mattn/go-colorable v0.1.2 h1:/bC9yWikZXAL9uJdulbSfyVNIR3n3trXl+v8+1sx8mU=
@@ -35,6 +37,7 @@ github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81P
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
 github.com/xzebra/notionapi v1.5.1-0.20211019063545-d541edbcd60c h1:rbOvhlwBdsgmMdZN2PQWl99DXfmAvj6VCRC02UiKwEY=
 github.com/xzebra/notionapi v1.5.1-0.20211019063545-d541edbcd60c/go.mod h1:wgxFlmxL+oIfxclWkt8jta0PkcBepajish2uCxzBxTo=
+golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2 h1:VklqNMn3ovrHsnt90PveolxSbWFaJdECFbxSq0Mqo2M=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/net v0.0.0-20190926025831-c00fd9afed17/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f h1:OfiFi4JbukWwe3lzw+xunroH1mnC1e2Gy5cxNJApiSY=

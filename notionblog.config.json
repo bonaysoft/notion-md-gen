@@ -1,13 +1,13 @@
 {
-	"databaseID": "f887dfac795547ff97a81bb669b1052f",
+	"databaseID": "9338ce6af74241259bdb230a9da697cc",
 	"imagesLink": "/images/posts",
-	"imagesFolder": "web/static/images",
-	"contentFolder": "web/content",
-	"archetypeFile": "web/archetypes/blog.md",
+	"imagesFolder": "../personal-blog/static/images/posts",
+	"contentFolder": "../personal-blog/content/blog",
+	"archetypeFile": "../personal-blog/archetypes/blog.md",
 	"propertyDescription": "Description",
 	"propertyTags": "Tags",
 	"propertyCategories": "Categories",
 	"filterProp": "Status",
-	"filterValue": "Finished ✅"
+	"filterValue": "Finished ✅",
 	"useShortcodes": true
 }

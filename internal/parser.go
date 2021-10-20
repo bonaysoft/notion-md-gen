@@ -11,7 +11,7 @@ import (
 
 	notion_blog "notion-blog/pkg"
 
-	"github.com/briandowns/spinner"
+	"github.com/janeczku/go-spinner"
 	"github.com/jomei/notionapi"
 )
 
@@ -104,40 +104,39 @@ func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (
 	return
 }
 
-func ParseAndGenerate(config notion_blog.BlogConfig) {
-	spinner := spinner.New(spinner.CharSets[9], time.Millisecond*100)
-
+func ParseAndGenerate(config notion_blog.BlogConfig) error {
 	client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_SECRET")))
 
-	spinner.Prefix = "Querying notion database "
-	spinner.Start()
+	spin := spinner.StartNew("Querying Notion database")
 	q, err := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
 		&notionapi.DatabaseQueryRequest{
 			PropertyFilter: filterFromConfig(config),
 			PageSize:       100,
 		})
-	spinner.Stop()
+	spin.Stop()
 	if err != nil {
-		log.Fatalf("couldn't query articles database: %s", err)
+		return fmt.Errorf("❌ Querying Notion database: %s", err)
 	}
+	fmt.Println("✔ Querying Notion database: Completed")
 
 	err = os.MkdirAll(config.ContentFolder, 0777)
 	if err != nil {
-		log.Fatalf("couldn't create content folder: %s", err)
+		return fmt.Errorf("couldn't create content folder: %s", err)
 	}
 
 	for i, res := range q.Results {
 		title := notion_blog.ConvertRichText(res.Properties["Name"].(*notionapi.TitleProperty).Title)
 
-		spinner.Prefix = fmt.Sprintf("[%d/%d] Getting children ", i+1, len(q.Results))
-		spinner.Start()
+		fmt.Printf("-- Article [%d/%d] --\n", i+1, len(q.Results))
+		spin = spinner.StartNew("Getting blocks tree")
 		// Get page blocks tree
 		blocks, err := recursiveGetChildren(client, notionapi.BlockID(res.ID))
+		spin.Stop()
 		if err != nil {
-			log.Println("err:", err)
+			log.Println("❌ Getting blocks tree:", err)
 			continue
 		}
-		spinner.Stop()
+		fmt.Println("✔ Getting blocks tree: Completed")
 
 		// Create file
 		f, _ := os.Create(filepath.Join(
@@ -145,19 +144,19 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 			generateArticleName(title, res.CreatedTime),
 		))
 
-		spinner.Prefix = fmt.Sprintf("[%d/%d] Generating content ", i+1, len(q.Results))
-		spinner.Start()
 		// Generate and dump content to file
 		if err := notion_blog.Generate(f, res, blocks, config); err != nil {
-			fmt.Printf("error generating blog post: %s\n", err)
+			fmt.Println("❌ Generating blog post:", err)
 			f.Close()
 			continue
 		}
-		spinner.Stop()
+		fmt.Println("✔ Generating blog post: Completed")
 
 		// Change status of blog post if desired
 		changeStatus(client, res, config)
 
 		f.Close()
 	}
+
+	return nil
 }

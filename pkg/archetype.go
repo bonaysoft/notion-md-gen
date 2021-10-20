@@ -31,10 +31,7 @@ func MakeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
 
 	a.Banner = ""
 	if p.Cover != nil && p.Cover.GetURL() != "" {
-		coverSrc, err := getImage(p.Cover.GetURL(), config)
-		if err != nil {
-			log.Println("couldn't download cover:", err)
-		}
+		coverSrc, _ := getImage(p.Cover.GetURL(), config)
 		a.Banner = coverSrc
 	}
 

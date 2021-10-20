@@ -14,6 +14,7 @@ import (
 
 	"net/url"
 
+	"github.com/janeczku/go-spinner"
 	"github.com/jomei/notionapi"
 )
 
@@ -71,7 +72,7 @@ func ConvertRichText(t []notionapi.RichText) string {
 	return buf.String()
 }
 
-func getImage(imgURL string, config BlogConfig) (string, error) {
+func getImage(imgURL string, config BlogConfig) (_ string, err error) {
 	// Split image url to get host and file name
 	splittedURL, err := url.Parse(imgURL)
 	if err != nil {
@@ -84,7 +85,15 @@ func getImage(imgURL string, config BlogConfig) (string, error) {
 
 	name := fmt.Sprintf("%s_%s", splittedURL.Hostname(), filePath)
 
-	log.Println("getting image", name, "...")
+	spin := spinner.StartNew(fmt.Sprintf("Getting image `%s`", name))
+	defer func() {
+		spin.Stop()
+		if err != nil {
+			fmt.Println(fmt.Sprintf("❌ Getting image `%s`: %s", name, err))
+		} else {
+			fmt.Println(fmt.Sprintf("✔ Getting image `%s`: Completed", name))
+		}
+	}()
 
 	resp, err := http.Get(imgURL)
 	if err != nil {
@@ -187,7 +196,7 @@ func GenerateContent(w io.Writer, blocks []notionapi.Block, config BlogConfig, p
 				continue
 			}
 			// Parse external page metadata
-			og, err := parseMetadata(b.Bookmark.URL)
+			og, err := parseMetadata(b.Bookmark.URL, config)
 			if err != nil {
 				log.Println("error getting bookmark metadata:", err)
 			}
@@ -219,10 +228,7 @@ func GenerateContent(w io.Writer, blocks []notionapi.Block, config BlogConfig, p
 				append([]string{"    "}, prefixes...)...)
 
 		case *notionapi.ImageBlock:
-			src, err := getImage(b.Image.File.URL, config)
-			if err != nil {
-				log.Println("error getting image:", err)
-			}
+			src, _ := getImage(b.Image.File.URL, config)
 			fprintf(w, prefixes, "![%s](%s)\n", ConvertRichText(b.Image.Caption), src)
 
 		case *notionapi.CodeBlock:
@@ -236,12 +242,12 @@ func GenerateContent(w io.Writer, blocks []notionapi.Block, config BlogConfig, p
 
 		case *notionapi.UnsupportedBlock:
 			if b.GetType() != "unsupported" {
-				log.Println("unimplemented", block.GetType())
+				fmt.Println("ℹ Unimplemented block", b.GetType())
 			} else {
-				log.Println("unsupported block type")
+				fmt.Println("ℹ Unsupported block type")
 			}
 		default:
-			log.Println("unimplemented", block.GetType())
+			fmt.Println("ℹ Unimplemented block", b.GetType())
 		}
 	}
 }

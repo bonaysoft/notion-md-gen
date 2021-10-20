@@ -3,6 +3,7 @@ package notion_blog
 import (
 	"fmt"
 
+	"github.com/janeczku/go-spinner"
 	"github.com/otiai10/opengraph"
 )
 
@@ -16,7 +17,17 @@ type OGMetadata struct {
 
 // parseMetadata returns the OpenGraph metadata of a page so we can generate a
 // bookmark.
-func parseMetadata(url string) (*OGMetadata, error) {
+func parseMetadata(url string, config BlogConfig) (_ *OGMetadata, err error) {
+	spin := spinner.StartNew("Getting bookmark metadata")
+	defer func() {
+		spin.Stop()
+		if err != nil {
+			fmt.Println("❌ Getting bookmark metadata:", err)
+		} else {
+			fmt.Println("✔ Getting bookmark metadata: Completed")
+		}
+	}()
+
 	og, err := opengraph.Fetch(url)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't parse metadata of `%s`: %s", url, err)
