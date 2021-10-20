@@ -22,5 +22,5 @@ func fprintln(w io.Writer, prefixes []string, vals ...interface{}) {
 	args[0] = prefix
 	copy(args[1:], vals)
 	// Print to writer
-	fmt.Fprintln(w, args...)
+	fprintf(w, prefixes, "%s", fmt.Sprint(vals...))
 }
