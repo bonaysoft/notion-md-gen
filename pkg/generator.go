@@ -54,7 +54,7 @@ func ConvertRich(t notionapi.RichText) string {
 		if t.Text.Link != nil {
 			return fmt.Sprintf(
 				emphFormat(t.Annotations),
-				fmt.Sprintf("[%s](%s)", t.Text.Content, t.Text.Link),
+				fmt.Sprintf("[%s](%s)", t.Text.Content, t.Text.Link.Url),
 			)
 		}
 		return fmt.Sprintf(emphFormat(t.Annotations), t.Text.Content)
