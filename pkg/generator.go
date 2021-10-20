@@ -203,12 +203,13 @@ func GenerateContent(w io.Writer, blocks []notionapi.Block, config BlogConfig, p
 
 			// GenerateContent shortcode with given metadata
 			fprintf(w, prefixes,
-				`{{< bookmark url="%s" title="%s" description="%s" img="%s" >}}`,
+				`{{< bookmark url="%s" title="%s" img="%s" >}}`,
 				og.URL,
 				og.Title,
-				og.Description,
 				og.Image,
 			)
+			fprintln(w, prefixes, og.Description)
+			fprintln(w, prefixes, "{{< /bookmark >}}")
 
 		case *notionapi.QuoteBlock:
 			fprintf(w, prefixes, "> %s", ConvertRichText(b.Quote.Text))
