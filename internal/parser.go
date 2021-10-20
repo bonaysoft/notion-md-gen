@@ -11,6 +11,7 @@ import (
 
 	notion_blog "notion-blog/pkg"
 
+	"github.com/briandowns/spinner"
 	"github.com/jomei/notionapi"
 )
 
@@ -104,12 +105,18 @@ func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (
 }
 
 func ParseAndGenerate(config notion_blog.BlogConfig) {
+	spinner := spinner.New(spinner.CharSets[9], time.Millisecond*100)
+
 	client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_SECRET")))
+
+	spinner.Prefix = "Querying notion database "
+	spinner.Start()
 	q, err := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
 		&notionapi.DatabaseQueryRequest{
 			PropertyFilter: filterFromConfig(config),
 			PageSize:       100,
 		})
+	spinner.Stop()
 	if err != nil {
 		log.Fatalf("couldn't query articles database: %s", err)
 	}
@@ -119,15 +126,18 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 		log.Fatalf("couldn't create content folder: %s", err)
 	}
 
-	for _, res := range q.Results {
+	for i, res := range q.Results {
 		title := notion_blog.ConvertRichText(res.Properties["Name"].(*notionapi.TitleProperty).Title)
 
+		spinner.Prefix = fmt.Sprintf("[%d/%d] Getting children ", i+1, len(q.Results))
+		spinner.Start()
 		// Get page blocks tree
 		blocks, err := recursiveGetChildren(client, notionapi.BlockID(res.ID))
 		if err != nil {
 			log.Println("err:", err)
 			continue
 		}
+		spinner.Stop()
 
 		// Create file
 		f, _ := os.Create(filepath.Join(
@@ -135,11 +145,16 @@ func ParseAndGenerate(config notion_blog.BlogConfig) {
 			generateArticleName(title, res.CreatedTime),
 		))
 
+		spinner.Prefix = fmt.Sprintf("[%d/%d] Generating content ", i+1, len(q.Results))
+		spinner.Start()
 		// Generate and dump content to file
 		if err := notion_blog.Generate(f, res, blocks, config); err != nil {
+			fmt.Printf("error generating blog post: %s\n", err)
 			f.Close()
 			continue
 		}
+		spinner.Stop()
+
 		// Change status of blog post if desired
 		changeStatus(client, res, config)
 
