@@ -15,22 +15,25 @@ import (
 	"github.com/jomei/notionapi"
 )
 
-func filterFromConfig(config notion_blog.BlogConfig) *notionapi.PropertyFilter {
-	if config.FilterProp != "" {
-		if config.FilterValue == "" {
-			log.Println("error: a value is needed to use a filter property")
-			return nil
-		}
+func filterFromConfig(config notion_blog.BlogConfig) *notionapi.CompoundFilter {
+	if config.FilterProp == "" || len(config.FilterValue) == 0 {
+		return nil
+	}
 
-		return &notionapi.PropertyFilter{
+	properties := make([]notionapi.PropertyFilter, len(config.FilterValue))
+
+	for i, val := range config.FilterValue {
+		properties[i] = notionapi.PropertyFilter{
 			Property: config.FilterProp,
 			Select: &notionapi.SelectFilterCondition{
-				Equals: config.FilterValue,
+				Equals: val,
 			},
 		}
 	}
 
-	return nil
+	return &notionapi.CompoundFilter{
+		notionapi.FilterOperatorOR: properties,
+	}
 }
 
 func generateArticleName(title string, date time.Time) string {
@@ -47,9 +50,25 @@ func generateArticleName(title string, date time.Time) string {
 	)
 }
 
-func changeStatus(client *notionapi.Client, p notionapi.Page, config notion_blog.BlogConfig) {
+// chageStatus changes the Notion article status to the published value if set.
+// It returns true if status changed.
+func changeStatus(client *notionapi.Client, p notionapi.Page, config notion_blog.BlogConfig) bool {
+	// No published value or filter prop to change
 	if config.FilterProp == "" || config.PublishedValue == "" {
-		return
+		return false
+	}
+
+	if v, ok := p.Properties[config.FilterProp]; ok {
+		if status, ok := v.(*notionapi.SelectProperty); ok {
+			// Already has published value
+			if status.Select.Name == config.PublishedValue {
+				return false
+			}
+		} else { // Filter prop is not a select property
+			return false
+		}
+	} else { // No filter prop in page, can't change it
+		return false
 	}
 
 	updatedProps := make(notionapi.Properties)
@@ -67,6 +86,8 @@ func changeStatus(client *notionapi.Client, p notionapi.Page, config notion_blog
 	if err != nil {
 		log.Println("error changing status:", err)
 	}
+
+	return err == nil
 }
 
 func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (blocks []notionapi.Block, err error) {
@@ -110,7 +131,7 @@ func ParseAndGenerate(config notion_blog.BlogConfig) error {
 	spin := spinner.StartNew("Querying Notion database")
 	q, err := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
 		&notionapi.DatabaseQueryRequest{
-			PropertyFilter: filterFromConfig(config),
+			CompoundFilter: filterFromConfig(config),
 			PageSize:       100,
 		})
 	spin.Stop()
@@ -123,6 +144,9 @@ func ParseAndGenerate(config notion_blog.BlogConfig) error {
 	if err != nil {
 		return fmt.Errorf("couldn't create content folder: %s", err)
 	}
+
+	// number of article status changed
+	changed := 0
 
 	for i, res := range q.Results {
 		title := notion_blog.ConvertRichText(res.Properties["Name"].(*notionapi.TitleProperty).Title)
@@ -153,9 +177,17 @@ func ParseAndGenerate(config notion_blog.BlogConfig) error {
 		fmt.Println("✔ Generating blog post: Completed")
 
 		// Change status of blog post if desired
-		changeStatus(client, res, config)
+		if changeStatus(client, res, config) {
+			changed++
+		}
 
 		f.Close()
+	}
+
+	// Set GITHUB_ACTIONS info variables
+	// https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions
+	if os.Getenv("GITHUB_ACTIONS") == "true" {
+		fmt.Printf("::set-output name=articles_published::%d\n", changed)
 	}
 
 	return nil

@@ -14,9 +14,9 @@ type BlogConfig struct {
 	PropertyTags        string `usage:"Tags multi-select porperty name in Notion."`
 	PropertyCategories  string `usage:"Categories multi-select porperty name in Notion."`
 
-	FilterProp     string `usage:"Property of the filter to apply to a select value of the articles."`
-	FilterValue    string `usage:"Value of the filter to apply to the Notion articles database."`
-	PublishedValue string `usage:"Value to which the filter property will be set after generating the content."`
+	FilterProp     string   `usage:"Property of the filter to apply to a select value of the articles."`
+	FilterValue    []string `usage:"Value of the filter to apply to the Notion articles database."`
+	PublishedValue string   `usage:"Value to which the filter property will be set after generating the content."`
 
 	UseShortcodes bool `usage:"True if you want to generate shortcodes for unimplemented markdown blocks, such as callout or quote."`
 }

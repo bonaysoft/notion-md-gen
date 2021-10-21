@@ -37,7 +37,7 @@ inputs:
     required: false
     default: ''
   filter-value:
-    description: Value of the filter to apply to the Notion articles database.
+    description: Values of the filter to apply to the Notion articles database.
     required: false
     default: ''
   published-value:
