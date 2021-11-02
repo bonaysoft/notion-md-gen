@@ -122,11 +122,12 @@ func Generate(w io.Writer, page notionapi.Page, blocks []notionapi.Block, config
 	// Parse template file
 	t := template.New(path.Base(config.ArchetypeFile)).Delims("[[", "]]")
 	t.Funcs(template.FuncMap{
-		"add":  func(a, b int) int { return a + b },
-		"sub":  func(a, b int) int { return a - b },
-		"mul":  func(a, b int) int { return a * b },
-		"div":  func(a, b int) int { return a / b },
-		"rich": ConvertRichText,
+		"add":    func(a, b int) int { return a + b },
+		"sub":    func(a, b int) int { return a - b },
+		"mul":    func(a, b int) int { return a * b },
+		"div":    func(a, b int) int { return a / b },
+		"repeat": func(s string, n int) string { return strings.Repeat(s, n) },
+		"rich":   ConvertRichText,
 	})
 
 	t, err := t.ParseFiles(config.ArchetypeFile)
