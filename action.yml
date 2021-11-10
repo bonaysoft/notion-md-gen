@@ -47,7 +47,7 @@ inputs:
   use-date-for-filename:
     description: Use the creation date to generate the post filename.
     required: false
-    default: false
+    default: true
   use-shortcodes:
     description: True if you want to generate shortcodes for unimplemented markdown blocks, such as callout or quote.
     required: false
@@ -57,29 +57,16 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - -database-id
-    - ${{ inputs.database-id }}
-    - -content-folder
-    - ${{ inputs.content-folder }}
-    - -images-folder
-    - ${{ inputs.images-folder }}
-    - -archetype-file
-    - ${{ inputs.archetype-file }}
-    - -property-description
-    - ${{ inputs.property-description }}
-    - -property-tags
-    - ${{ inputs.property-tags }}
-    - -property-categories
-    - ${{ inputs.property-categories }}
-    - -images-link
-    - ${{ inputs.images-link }}
-    - -filter-prop
-    - ${{ inputs.filter-prop }}
-    - -filter-value
-    - ${{ inputs.filter-value }}
-    - -published-value
-    - ${{ inputs.published-value }}
-    - -use-date-for-filename
-    - ${{ inputs.use-date-for-filename }}
-    - -use-shortcodes
-    - ${{ inputs.use-shortcodes }}
+    - -database-id=${{ inputs.database-id }}
+    - -content-folder=${{ inputs.content-folder }}
+    - -images-folder=${{ inputs.images-folder }}
+    - -archetype-file=${{ inputs.archetype-file }}
+    - -property-description=${{ inputs.property-description }}
+    - -property-tags=${{ inputs.property-tags }}
+    - -property-categories=${{ inputs.property-categories }}
+    - -images-link=${{ inputs.images-link }}
+    - -filter-prop=${{ inputs.filter-prop }}
+    - -filter-value=${{ inputs.filter-value }}
+    - -published-value=${{ inputs.published-value }}
+    - -use-date-for-filename=${{ inputs.use-date-for-filename }}
+    - -use-shortcodes=${{ inputs.use-shortcodes }}
