@@ -36,18 +36,21 @@ func filterFromConfig(config notion_blog.BlogConfig) *notionapi.CompoundFilter {
 	}
 }
 
-func generateArticleName(title string, date time.Time) string {
-	return fmt.Sprintf(
-		"%s_%s.md",
-		date.Format("2006-01-02"),
-		strings.ReplaceAll(
-			strings.ToValidUTF8(
-				strings.ToLower(title),
-				"",
-			),
-			" ", "_",
+func generateArticleName(title string, date time.Time, config notion_blog.BlogConfig) string {
+	escapedTitle := strings.ReplaceAll(
+		strings.ToValidUTF8(
+			strings.ToLower(title),
+			"",
 		),
+		" ", "_",
 	)
+	escapedFilename := escapedTitle + ".md"
+
+	if config.UseDateForFilename {
+	    // Add date to the name to allow repeated titles
+	    return date.Format("2006-01-02") + escapedFilename
+	}
+	return escapedFilename
 }
 
 // chageStatus changes the Notion article status to the published value if set.
@@ -165,7 +168,7 @@ func ParseAndGenerate(config notion_blog.BlogConfig) error {
 		// Create file
 		f, _ := os.Create(filepath.Join(
 			config.ContentFolder,
-			generateArticleName(title, res.CreatedTime),
+			generateArticleName(title, res.CreatedTime, config),
 		))
 
 		// Generate and dump content to file

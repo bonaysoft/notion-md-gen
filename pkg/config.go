@@ -18,5 +18,6 @@ type BlogConfig struct {
 	FilterValue    []string `usage:"Value of the filter to apply to the Notion articles database."`
 	PublishedValue string   `usage:"Value to which the filter property will be set after generating the content."`
 
+    UseDateForFilename bool `usage:"Use the creation date to generate the post filename."`
 	UseShortcodes bool `usage:"True if you want to generate shortcodes for unimplemented markdown blocks, such as callout or quote."`
 }
