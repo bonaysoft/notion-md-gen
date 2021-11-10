@@ -47,7 +47,7 @@ inputs:
   use-date-for-filename:
     description: Use the creation date to generate the post filename.
     required: false
-    default: true
+    default: false
   use-shortcodes:
     description: True if you want to generate shortcodes for unimplemented markdown blocks, such as callout or quote.
     required: false
