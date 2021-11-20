@@ -17,7 +17,10 @@ type OGMetadata struct {
 
 // parseMetadata returns the OpenGraph metadata of a page so we can generate a
 // bookmark.
-func parseMetadata(url string, config BlogConfig) (_ *OGMetadata, err error) {
+func parseMetadata(url string, config BlogConfig) (o *OGMetadata, err error) {
+	// Create an empty metadata struct to not return nil
+	o = &OGMetadata{}
+
 	spin := spinner.StartNew("Getting bookmark metadata")
 	defer func() {
 		spin.Stop()
@@ -30,10 +33,10 @@ func parseMetadata(url string, config BlogConfig) (_ *OGMetadata, err error) {
 
 	og, err := opengraph.Fetch(url)
 	if err != nil {
-		return nil, fmt.Errorf("couldn't parse metadata of `%s`: %s", url, err)
+		return o, fmt.Errorf("couldn't parse metadata of `%s`: %s", url, err)
 	}
 	if og == nil {
-		return nil, fmt.Errorf("unexpected error")
+		return o, fmt.Errorf("unexpected error")
 	}
 
 	// Change to absolute urls
