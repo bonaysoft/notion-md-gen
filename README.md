@@ -1,6 +1,6 @@
-# notion-blog
+# notion-md-gen
 
-`notion-blog` allows you to use Notion as a CMS for pages built with hugo. You can use it as a cli or even automate your blog repo to update itself with the Github Action.
+`notion-md-gen` allows you to use Notion as a CMS for pages built with hugo. You can use it as a cli or even automate your blog repo to update itself with the Github Action.
 
 
 ## Requisites
@@ -16,7 +16,7 @@
 The cli shows the executable flags when using flag `—help`.
 
 ```bash
-$> notion-blog —help
+$> notion-md-gen —help
 ```
 
 ### Binary

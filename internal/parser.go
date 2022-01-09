@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	notion_blog "notion-blog/pkg"
+	notion_blog "notion-md-gen/pkg"
 
 	"github.com/janeczku/go-spinner"
 	"github.com/jomei/notionapi"

@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"notion-blog/internal"
-	notion_blog "notion-blog/pkg"
+	"notion-md-gen/internal"
+	notion_blog "notion-md-gen/pkg"
 
 	"github.com/joho/godotenv"
 )
@@ -22,12 +22,12 @@ func parseJSONConfig() {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file provided")
 	}
 
 	parseJSONConfig()
-
-	internal.ParseAndGenerate(config)
+	if err := internal.ParseAndGenerate(config); err != nil {
+		log.Println(err)
+	}
 }

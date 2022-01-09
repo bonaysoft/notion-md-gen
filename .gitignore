@@ -3,6 +3,6 @@
 *.log
 tmp/
 .env
-notion-blog
+notion-md-gen
 bin/
 web/

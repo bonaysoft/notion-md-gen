@@ -1,4 +1,4 @@
-module notion-blog
+module notion-md-gen
 
 go 1.17
 

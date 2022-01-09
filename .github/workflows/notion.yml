@@ -1,4 +1,4 @@
-name: notion-blog
+name: notion-md-gen
 on:
   # On pull requests commits
   # pull_request:
@@ -18,8 +18,8 @@ jobs:
         # with:
           # ref: ${{ github.head_ref }}
 
-      - name: notion-blog
-        uses: xzebra/notion-blog@master
+      - name: notion-md-gen
+        uses: xzebra/notion-md-gen@master
         with:
           database-id: 'f887dfac795547ff97a81bb669b1052f'
           content-folder: web/content
@@ -42,6 +42,6 @@ jobs:
         uses: creyD/prettier_action@v3.1
         with:
           prettier_options: --write ./web/content/**/*.md
-          commit_message: 'notion-blog: update articles (auto)'
+          commit_message: 'notion-md-gen: update articles (auto)'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
