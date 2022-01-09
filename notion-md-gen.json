@@ -1,9 +1,9 @@
 {
-	"databaseID": "9338ce6af74241259bdb230a9da697cc",
+	"databaseID": "",
 	"imagesLink": "/images/posts",
-	"imagesFolder": "../personal-blog/static/images/posts",
-	"contentFolder": "../personal-blog/content/blog",
-	"archetypeFile": "../personal-blog/archetypes/blog.md",
+	"imagesFolder": "./example/static/images/posts",
+	"contentFolder": "./example/posts",
+	"archetypeFile": "./example/blog.template",
 	"propertyDescription": "Description",
 	"propertyTags": "Tags",
 	"propertyCategories": "Categories",

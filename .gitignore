@@ -3,6 +3,7 @@
 *.log
 tmp/
 .env
-notion-md-gen
 bin/
 web/
+example/posts
+example/static
