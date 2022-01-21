@@ -1,12 +1,16 @@
 package cmd
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
+	"github.com/itzg/go-flagsfiller"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
 	"notion-md-gen/internal"
@@ -47,7 +51,19 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is notion-md-gen.yaml)")
 
-	_ = viper.BindEnv("databaseId", "DATABASE_ID") // support env setup the notion database id
+	// fill and map struct fields to flags
+	var config notion_blog.BlogConfig
+	filler := flagsfiller.New()
+	if err := filler.Fill(flag.CommandLine, &config); err != nil {
+		log.Fatal(err)
+	}
+	rootCmd.Flags().AddGoFlagSet(flag.CommandLine)
+	rootCmd.Flags().VisitAll(func(f *pflag.Flag) {
+		// keep same name for the name of config and flag, the flag will overwrite config.
+		_ = viper.BindPFlag(strings.Replace(f.Name, "-", "", -1), f)
+	})
+	// bind the env DATABASE_ID to the databaseId of config struct
+	_ = viper.BindEnv("databaseId", "DATABASE_ID")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -60,10 +76,9 @@ func initConfig() {
 		viper.SetConfigName("notion-md-gen")
 	}
 
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file provided")
+	if err := godotenv.Load(); err == nil {
+		fmt.Println("Load .env file")
 	}
-
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.

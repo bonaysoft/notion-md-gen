@@ -7,6 +7,7 @@ replace github.com/jomei/notionapi => github.com/xzebra/notionapi v1.5.1-0.20211
 // replace github.com/jomei/notionapi => ../notionapi
 
 require (
+	github.com/itzg/go-flagsfiller v1.9.0
 	github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394
 	github.com/joho/godotenv v1.4.0
 	github.com/jomei/notionapi v1.5.3-0.20211015052055-e3eaeddd589f
@@ -18,6 +19,7 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/iancoleman/strcase v0.2.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect

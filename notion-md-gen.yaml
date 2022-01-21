@@ -1,0 +1,14 @@
+databaseID: ''
+imagesLink: "/images/posts"
+imagesFolder: "./example/static/images/posts"
+contentFolder: "./example/posts"
+archetypeFile: "./example/blog.template"
+propertyDescription: Description
+propertyTags: Tags
+propertyCategories: Categories
+filterProp: Status
+filterValue:
+  - "Finished ✅"
+  - "Published 🖨"
+publishedValue: "Published 🖨"
+useShortcodes: true

@@ -5,6 +5,69 @@ branding:
   icon: inbox
   color: black
 
+inputs:
+  database-id:
+    description: ID of the Notion database of the blog.
+    required: true
+  content-folder:
+    description: Directory in which the hugo content will be generated.
+    required: true
+  archetype-file:
+    description: Route to the archetype file to generate the header.
+    required: true
+  images-folder:
+    description: Directory in which the static images will be stored.
+    required: true
+  images-link:
+    description: URL beggining to link the static images.
+    required: true
+  property-description:
+    description: Description property name in Notion.
+    required: false
+    default: ''
+  property-tags:
+    description: Tags multi-select porperty name in Notion.
+    required: false
+    default: ''
+  property-categories:
+    description: Categories multi-select porperty name in Notion.
+    required: false
+    default: ''
+  filter-prop:
+    description: Property of the filter to apply to a select value of the articles.
+    required: false
+    default: ''
+  filter-value:
+    description: Values of the filter to apply to the Notion articles database.
+    required: false
+    default: ''
+  published-value:
+    description: Value to which the filter property will be set after generating the content.
+    required: false
+    default: ''
+  use-date-for-filename:
+    description: Use the creation date to generate the post filename.
+    required: false
+    default: true
+  use-shortcodes:
+    description: True if you want to generate shortcodes for unimplemented markdown blocks, such as callout or quote.
+    required: false
+    default: false
+
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - --database-id=${{ inputs.database-id }}
+    - --content-folder=${{ inputs.content-folder }}
+    - --images-folder=${{ inputs.images-folder }}
+    - --archetype-file=${{ inputs.archetype-file }}
+    - --property-description=${{ inputs.property-description }}
+    - --property-tags=${{ inputs.property-tags }}
+    - --property-categories=${{ inputs.property-categories }}
+    - --images-link=${{ inputs.images-link }}
+    - --filter-prop=${{ inputs.filter-prop }}
+    - --filter-value=${{ inputs.filter-value }}
+    - --published-value=${{ inputs.published-value }}
+    - --use-date-for-filename=${{ inputs.use-date-for-filename }}
+    - --use-shortcodes=${{ inputs.use-shortcodes }}

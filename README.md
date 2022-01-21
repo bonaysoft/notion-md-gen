@@ -23,6 +23,8 @@ cd your-blog-dir
 notion-md-gen
 ```
 
+The binary looks for a config file called `notion-md-gen.json` or `notion-md-gen.yaml` in the directory where it is executed. You can see the example config in [notion-md-gen.json](notion-md-gen.json).
+
 ### Github Action
 
 To use it as a Github Action, you can follow the example of the repository in [.github/worflows/notion.yml](.github/workflows/notion.yml).
