@@ -57,13 +57,18 @@ func init() {
 	if err := filler.Fill(flag.CommandLine, &config); err != nil {
 		log.Fatal(err)
 	}
+
+	var envPrefix string
+	if os.Getenv("GITHUB_ACTIONS") == "true" {
+		envPrefix = "input"
+	}
+
 	rootCmd.Flags().AddGoFlagSet(flag.CommandLine)
 	rootCmd.Flags().VisitAll(func(f *pflag.Flag) {
-		// keep same name for the name of config and flag, the flag will overwrite config.
-		_ = viper.BindPFlag(strings.Replace(f.Name, "-", "", -1), f)
+		key := strings.Replace(f.Name, "-", "", -1)                   // keep same name for the name of config,env and flag, the flag will overwrite config.
+		_ = viper.BindPFlag(key, f)                                   // bind the flag to the config struct
+		_ = viper.BindEnv(key, strings.ToUpper(envPrefix+"_"+f.Name)) // bind the env to the config struct
 	})
-	// bind the env DATABASE_ID to the databaseId of config struct
-	_ = viper.BindEnv("databaseId", "DATABASE_ID")
 }
 
 // initConfig reads in config file and ENV variables if set.

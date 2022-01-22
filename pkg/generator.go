@@ -139,7 +139,7 @@ func Generate(w io.Writer, page notionapi.Page, blocks []notionapi.Block, config
 	// Dump markdown content into output according to archetype file
 	fileArchetype := MakeArchetypeFields(page, config)
 	config.ImagesFolder = filepath.Join(config.ImagesFolder, fileArchetype.Title)
-	config.ImagesLink = filepath.Join(config.ImagesLink, fileArchetype.Title)
+	config.ImagesLink = filepath.Join(config.ImagesLink, url.PathEscape(fileArchetype.Title))
 
 	// Generate markdown content
 	buffer := &bytes.Buffer{}
