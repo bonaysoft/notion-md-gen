@@ -6,13 +6,12 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"text/template"
-
-	"net/url"
 
 	"github.com/janeczku/go-spinner"
 	"github.com/jomei/notionapi"
@@ -74,17 +73,19 @@ func ConvertRichText(t []notionapi.RichText) string {
 
 func getImage(imgURL string, config BlogConfig) (_ string, err error) {
 	// Split image url to get host and file name
-	splittedURL, err := url.Parse(imgURL)
+	u, err := url.Parse(imgURL)
 	if err != nil {
 		return "", fmt.Errorf("malformed url: %s", err)
 	}
 
 	// Get file name
-	filePath := splittedURL.Path
-	filePath = filePath[strings.LastIndex(filePath, "/")+1:]
+	splitPaths := strings.Split(u.Path, "/")
+	imageFilename := splitPaths[len(splitPaths)-1]
+	if strings.HasPrefix(imageFilename, "Untitled.") {
+		imageFilename = splitPaths[len(splitPaths)-2] + filepath.Ext(u.Path)
+	}
 
-	name := fmt.Sprintf("%s_%s", splittedURL.Hostname(), filePath)
-
+	name := fmt.Sprintf("%s_%s", u.Hostname(), imageFilename)
 	spin := spinner.StartNew(fmt.Sprintf("Getting image `%s`", name))
 	defer func() {
 		spin.Stop()
@@ -135,12 +136,15 @@ func Generate(w io.Writer, page notionapi.Page, blocks []notionapi.Block, config
 		return fmt.Errorf("error parsing archetype file: %s", err)
 	}
 
+	// Dump markdown content into output according to archetype file
+	fileArchetype := MakeArchetypeFields(page, config)
+	config.ImagesFolder = filepath.Join(config.ImagesFolder, fileArchetype.Title)
+	config.ImagesLink = filepath.Join(config.ImagesLink, fileArchetype.Title)
+
 	// Generate markdown content
 	buffer := &bytes.Buffer{}
 	GenerateContent(buffer, blocks, config)
 
-	// Dump markdown content into output according to archetype file
-	fileArchetype := MakeArchetypeFields(page, config)
 	fileArchetype.Content = buffer.String()
 	err = t.Execute(w, fileArchetype)
 	if err != nil {
