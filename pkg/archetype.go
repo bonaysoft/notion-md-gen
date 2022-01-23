@@ -24,9 +24,9 @@ func MakeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
 	// Initialize first default Notion page fields
 	a := ArchetypeFields{
 		Title:        ConvertRichText(p.Properties["Name"].(*notionapi.TitleProperty).Title),
+		Author:       p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name,
 		CreationDate: p.CreatedTime,
 		LastModified: p.LastEditedTime,
-		Author:       p.Properties["Created By"].(*notionapi.CreatedByProperty).CreatedBy.Name,
 	}
 
 	a.Banner = ""
@@ -36,34 +36,30 @@ func MakeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
 	}
 
 	// Custom fields
-	if v, ok := p.Properties[config.PropertyDescription]; ok {
-		text, ok := v.(*notionapi.RichTextProperty)
-		if ok {
-			a.Description = ConvertRichText(text.RichText)
-		} else {
-			log.Println("warning: given property description is not a text property")
-		}
-	}
-
-	if v, ok := p.Properties[config.PropertyCategories]; ok {
-		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
-		if ok {
-			a.Categories = multiSelect.MultiSelect
-		} else {
-			log.Println("warning: given property categories is not a multi-select property")
-		}
-	}
-
-	if v, ok := p.Properties[config.PropertyTags]; ok {
-		multiSelect, ok := v.(*notionapi.MultiSelectProperty)
-		if ok {
-			a.Tags = multiSelect.MultiSelect
-		} else {
-			log.Println("warning: given property tags is not a multi-select property")
-		}
-	}
+	propExtractBind(p.Properties, config.PropertyTitle, func(target interface{}) { a.Title = target.(string) })
+	propExtractBind(p.Properties, config.PropertyDescription, func(target interface{}) { a.Description = target.(string) })
+	propExtractBind(p.Properties, config.PropertyCategories, func(target interface{}) { a.Categories = target.([]notionapi.Option) })
+	propExtractBind(p.Properties, config.PropertyTags, func(target interface{}) { a.Tags = target.([]notionapi.Option) })
 
 	a.Properties = p.Properties
 
 	return a
+}
+
+// propExtractBind extract some prop
+// todo refactor when the go v1.18 release
+func propExtractBind(props notionapi.Properties, key string, bindTo func(target interface{})) {
+	v, ok := props[key]
+	if !ok {
+		return
+	}
+
+	switch vv := v.(type) {
+	case *notionapi.RichTextProperty:
+		bindTo(ConvertRichText(vv.RichText))
+	case *notionapi.MultiSelectProperty:
+		bindTo(vv.MultiSelect)
+	default:
+		log.Println("warning: given property %s is not supported type: %T", key, v)
+	}
 }
