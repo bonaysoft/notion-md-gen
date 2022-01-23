@@ -4,6 +4,7 @@
 	"imagesFolder": "./example/static/images/posts",
 	"contentFolder": "./example/posts",
 	"archetypeFile": "./example/blog.template",
+	"propertyTitle": "Title",
 	"propertyDescription": "Description",
 	"propertyTags": "Tags",
 	"propertyCategories": "Categories",

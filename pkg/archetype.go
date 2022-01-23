@@ -51,6 +51,7 @@ func MakeArchetypeFields(p notionapi.Page, config BlogConfig) ArchetypeFields {
 func propExtractBind(props notionapi.Properties, key string, bindTo func(target interface{})) {
 	v, ok := props[key]
 	if !ok {
+		log.Printf("warning: given property %s is not exist\n", key)
 		return
 	}
 
@@ -60,6 +61,6 @@ func propExtractBind(props notionapi.Properties, key string, bindTo func(target 
 	case *notionapi.MultiSelectProperty:
 		bindTo(vv.MultiSelect)
 	default:
-		log.Println("warning: given property %s is not supported type: %T", key, v)
+		log.Printf("warning: given property %s is not supported type: %T\n", key, v)
 	}
 }

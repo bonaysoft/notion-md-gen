@@ -9,7 +9,7 @@ type BlogConfig struct {
 	ArchetypeFile string `mapstructure:"ArchetypeFile" usage:"Route to the archetype file to generate the header."`
 
 	// Optional:
-	PropertyTitle       string `mapstructure:"property_title" usage:"Title property name in Notion."`
+	PropertyTitle       string `mapstructure:"propertyTitle" usage:"Title property name in Notion."`
 	PropertyDescription string `mapstructure:"PropertyDescription" usage:"Description property name in Notion."`
 	PropertyTags        string `mapstructure:"PropertyTags" yaml:"property_tags" usage:"Tags multi-select porperty name in Notion."`
 	PropertyCategories  string `mapstructure:"PropertyCategories" usage:"Categories multi-select porperty name in Notion."`
