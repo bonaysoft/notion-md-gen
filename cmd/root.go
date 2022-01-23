@@ -60,14 +60,15 @@ func init() {
 
 	var envPrefix string
 	if os.Getenv("GITHUB_ACTIONS") == "true" {
-		envPrefix = "input"
+		envPrefix = "input_"
 	}
 
 	rootCmd.Flags().AddGoFlagSet(flag.CommandLine)
 	rootCmd.Flags().VisitAll(func(f *pflag.Flag) {
-		key := strings.Replace(f.Name, "-", "", -1)                   // keep same name for the name of config,env and flag, the flag will overwrite config.
-		_ = viper.BindPFlag(key, f)                                   // bind the flag to the config struct
-		_ = viper.BindEnv(key, strings.ToUpper(envPrefix+"_"+f.Name)) // bind the env to the config struct
+		key := strings.NewReplacer("-", "").Replace(f.Name)
+		envKey := strings.NewReplacer("-", "_").Replace(f.Name)
+		_ = viper.BindPFlag(key, f)                               // bind the flag to the config struct
+		_ = viper.BindEnv(key, strings.ToUpper(envPrefix+envKey)) // bind the env to the config struct
 	})
 }
 
@@ -83,6 +84,13 @@ func initConfig() {
 
 	if err := godotenv.Load(); err == nil {
 		fmt.Println("Load .env file")
+	}
+	// copy to the standard env variable
+	// INPUT_DATABASE-ID => INPUT_DATABASE_ID
+	for _, env := range os.Environ() {
+		key := strings.Split(env, "=")[0]
+		r := strings.NewReplacer("-", "_")
+		_ = os.Setenv(r.Replace(key), os.Getenv(key))
 	}
 	viper.AutomaticEnv() // read in environment variables that match
 
