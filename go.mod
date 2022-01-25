@@ -2,7 +2,7 @@ module notion-md-gen
 
 go 1.17
 
-replace github.com/jomei/notionapi => github.com/xzebra/notionapi v1.5.1-0.20211019063545-d541edbcd60c
+replace github.com/jomei/notionapi => github.com/saltbo/notionapi v1.7.3-0.20220125123013-40e934232fa4
 
 // replace github.com/jomei/notionapi => ../notionapi
 
@@ -10,9 +10,10 @@ require (
 	github.com/itzg/go-flagsfiller v1.9.0
 	github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394
 	github.com/joho/godotenv v1.4.0
-	github.com/jomei/notionapi v1.5.3-0.20211015052055-e3eaeddd589f
+	github.com/jomei/notionapi v1.7.3
 	github.com/otiai10/opengraph v1.1.3
 	github.com/spf13/cobra v1.3.0
+	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.10.0
 )
 
@@ -28,7 +29,6 @@ require (
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect

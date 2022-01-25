@@ -162,7 +162,7 @@ func GenerateContent(w io.Writer, blocks []notionapi.Block, config BlogConfig, p
 	numberedList := false
 	bulletedList := false
 
-	for _, block := range blocks {
+	for blockIdx, block := range blocks {
 		// Add line break after list is finished
 		if bulletedList && block.GetType() != notionapi.BlockTypeBulletedListItem {
 			bulletedList = false
@@ -249,7 +249,20 @@ func GenerateContent(w io.Writer, blocks []notionapi.Block, config BlogConfig, p
 			}
 			fprintln(w, prefixes, ConvertRichText(b.Code.Text))
 			fprintln(w, prefixes, "```")
+		case *notionapi.TableBlock:
+			GenerateContent(w, b.Table.Children, config, prefixes...)
+		case *notionapi.TableRowBlock:
+			if blockIdx == 1 {
+				for range b.TableRow.Cells {
+					fmt.Fprintf(w, "| :----- ")
+				}
+				fprintln(w, prefixes, "|")
+			}
 
+			for _, cell := range b.TableRow.Cells {
+				fmt.Fprintf(w, "| %s ", ConvertRichText(cell))
+			}
+			fprintln(w, prefixes, "|")
 		case *notionapi.UnsupportedBlock:
 			if b.GetType() != "unsupported" {
 				fmt.Println("ℹ Unimplemented block", b.GetType())
@@ -257,7 +270,7 @@ func GenerateContent(w io.Writer, blocks []notionapi.Block, config BlogConfig, p
 				fmt.Println("ℹ Unsupported block type")
 			}
 		default:
-			fmt.Println("ℹ Unimplemented block", b.GetType())
+			fmt.Printf("ℹ Unimplemented block: %T\n", b)
 		}
 	}
 }

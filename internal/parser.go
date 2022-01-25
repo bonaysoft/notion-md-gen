@@ -47,8 +47,8 @@ func generateArticleName(title string, date time.Time, config notion_blog.BlogCo
 	escapedFilename := escapedTitle + ".md"
 
 	if config.UseDateForFilename {
-	    // Add date to the name to allow repeated titles
-	    return date.Format("2006-01-02") + escapedFilename
+		// Add date to the name to allow repeated titles
+		return date.Format("2006-01-02") + escapedFilename
 	}
 	return escapedFilename
 }
@@ -118,6 +118,8 @@ func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (
 			b.BulletedListItem.Children, err = recursiveGetChildren(client, b.ID)
 		case *notionapi.NumberedListItemBlock:
 			b.NumberedListItem.Children, err = recursiveGetChildren(client, b.ID)
+		case *notionapi.TableBlock:
+			b.Table.Children, err = recursiveGetChildren(client, b.ID)
 		}
 
 		if err != nil {
