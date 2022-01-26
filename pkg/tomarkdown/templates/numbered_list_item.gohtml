@@ -1,0 +1,8 @@
+{{add .BlockIndex 1}}. {{ rich2md .NumberedListItem.Text -}}
+{{range $childIdx,$child := .NumberedListItem.Children }}
+    {{if $child.NumberedListItem }}{{add $childIdx 1}}. {{ rich2md $child.NumberedListItem.Text -}}
+    {{ range $cchildIdx,$cchild := $child.NumberedListItem.Children }}
+        {{if $cchild.NumberedListItem }}{{add $cchildIdx 1}}. {{ rich2md $cchild.NumberedListItem.Text -}}{{end}}
+    {{- end }}
+    {{- end}}
+{{- end}}

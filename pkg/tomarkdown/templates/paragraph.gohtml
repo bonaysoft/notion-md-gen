@@ -1,0 +1,4 @@
+{{ rich2md .Paragraph.Text }}
+{{- range $child := .Paragraph.Children }}
+    {{- if $child.Paragraph }} {{$child.Paragraph.Text}} {{end}}
+{{- end}}

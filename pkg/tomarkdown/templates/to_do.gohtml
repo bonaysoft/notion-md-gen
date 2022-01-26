@@ -1,0 +1,9 @@
+{{if deref .ToDo.Checked}}- [x]{{else}}- [ ]{{end}} {{ rich2md .ToDo.Text -}} {{"\n"}}
+{{- range $child := .ToDo.Children -}}
+    {{- if $child.ToDo }}{{if deref $child.ToDo.Checked }}    - [x] {{else}}    - [ ] {{end}}{{ rich2md $child.ToDo.Text -}} {{"\n"}}
+    {{- range $cchild := $child.ToDo.Children -}}
+        {{- if $cchild.ToDo }}{{if deref $cchild.ToDo.Checked }}        - [x] {{else}}        - [ ] {{end}}{{ rich2md $cchild.ToDo.Text -}} {{"\n"}}
+        {{- end -}}
+    {{end}}
+    {{- end -}}
+{{end}}

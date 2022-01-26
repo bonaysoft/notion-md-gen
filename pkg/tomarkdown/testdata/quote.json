@@ -1,0 +1,45 @@
+[
+  {
+    "type": "quote",
+    "quote": {
+      "text": [
+        {
+          "type": "text",
+          "text": {
+            "content": "Lacinato kale"
+          }
+        }
+      ],
+      "children": [
+        {
+          "type": "quote",
+          "quote": {
+            "text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Lacinato kale2"
+                }
+              }
+            ],
+            "children": [
+              {
+                "type": "quote",
+                "quote": {
+                  "text": [
+                    {
+                      "type": "text",
+                      "text": {
+                        "content": "Lacinato kale3"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

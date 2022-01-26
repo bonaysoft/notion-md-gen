@@ -10,29 +10,30 @@ import (
 	"time"
 
 	notion_blog "notion-md-gen/pkg"
+	"notion-md-gen/pkg/tomarkdown"
 
+	"github.com/dstotijn/go-notion"
 	"github.com/janeczku/go-spinner"
-	"github.com/jomei/notionapi"
 )
 
-func filterFromConfig(config notion_blog.BlogConfig) *notionapi.CompoundFilter {
+func filterFromConfig(config notion_blog.BlogConfig) *notion.DatabaseQueryFilter {
 	if config.FilterProp == "" || len(config.FilterValue) == 0 {
 		return nil
 	}
 
-	properties := make([]notionapi.PropertyFilter, len(config.FilterValue))
+	properties := make([]notion.DatabaseQueryFilter, len(config.FilterValue))
 
 	for i, val := range config.FilterValue {
-		properties[i] = notionapi.PropertyFilter{
+		properties[i] = notion.DatabaseQueryFilter{
 			Property: config.FilterProp,
-			Select: &notionapi.SelectFilterCondition{
+			Select: &notion.SelectDatabaseQueryFilter{
 				Equals: val,
 			},
 		}
 	}
 
-	return &notionapi.CompoundFilter{
-		notionapi.FilterOperatorOR: properties,
+	return &notion.DatabaseQueryFilter{
+		Or: properties,
 	}
 }
 
@@ -55,35 +56,30 @@ func generateArticleName(title string, date time.Time, config notion_blog.BlogCo
 
 // chageStatus changes the Notion article status to the published value if set.
 // It returns true if status changed.
-func changeStatus(client *notionapi.Client, p notionapi.Page, config notion_blog.BlogConfig) bool {
+func changeStatus(client *notion.Client, p notion.Page, config notion_blog.BlogConfig) bool {
 	// No published value or filter prop to change
 	if config.FilterProp == "" || config.PublishedValue == "" {
 		return false
 	}
 
-	if v, ok := p.Properties[config.FilterProp]; ok {
-		if status, ok := v.(*notionapi.SelectProperty); ok {
-			// Already has published value
-			if status.Select.Name == config.PublishedValue {
-				return false
-			}
-		} else { // Filter prop is not a select property
+	if v, ok := p.Properties.(notion.DatabasePageProperties)[config.FilterProp]; ok {
+		if v.Select.Name == config.PublishedValue {
 			return false
 		}
 	} else { // No filter prop in page, can't change it
 		return false
 	}
 
-	updatedProps := make(notionapi.Properties)
-	updatedProps[config.FilterProp] = notionapi.SelectProperty{
-		Select: notionapi.Option{
+	updatedProps := make(notion.DatabasePageProperties)
+	updatedProps[config.FilterProp] = notion.DatabasePageProperty{
+		Select: &notion.SelectOptions{
 			Name: config.PublishedValue,
 		},
 	}
 
-	_, err := client.Page.Update(context.Background(), notionapi.PageID(p.ID),
-		&notionapi.PageUpdateRequest{
-			Properties: updatedProps,
+	_, err := client.UpdatePage(context.Background(), p.ID,
+		notion.UpdatePageParams{
+			DatabasePageProperties: &updatedProps,
 		},
 	)
 	if err != nil {
@@ -93,8 +89,8 @@ func changeStatus(client *notionapi.Client, p notionapi.Page, config notion_blog
 	return err == nil
 }
 
-func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (blocks []notionapi.Block, err error) {
-	res, err := client.Block.GetChildren(context.Background(), blockID, &notionapi.Pagination{
+func recursiveGetChildren(client *notion.Client, blockID string) (blocks []notion.Block, err error) {
+	res, err := client.FindBlockChildrenByID(context.Background(), blockID, &notion.PaginationQuery{
 		PageSize: 100,
 	})
 	if err != nil {
@@ -106,24 +102,24 @@ func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (
 		return
 	}
 
-	for _, block := range blocks {
-		if !block.GetHasChildren() {
+	for _, block := range res.Results {
+		if !block.HasChildren {
 			continue
 		}
 
-		switch b := block.(type) {
-		case *notionapi.ParagraphBlock:
-			b.Paragraph.Children, err = recursiveGetChildren(client, b.ID)
-		case *notionapi.CalloutBlock:
-			b.Callout.Children, err = recursiveGetChildren(client, b.ID)
-		case *notionapi.QuoteBlock:
-			b.Quote.Children, err = recursiveGetChildren(client, b.ID)
-		case *notionapi.BulletedListItemBlock:
-			b.BulletedListItem.Children, err = recursiveGetChildren(client, b.ID)
-		case *notionapi.NumberedListItemBlock:
-			b.NumberedListItem.Children, err = recursiveGetChildren(client, b.ID)
-		case *notionapi.TableBlock:
-			b.Table.Children, err = recursiveGetChildren(client, b.ID)
+		switch block.Type {
+		case notion.BlockTypeParagraph:
+			block.Paragraph.Children, err = recursiveGetChildren(client, block.ID)
+		case notion.BlockTypeCallout:
+			block.Callout.Children, err = recursiveGetChildren(client, block.ID)
+		case notion.BlockTypeQuote:
+			block.Quote.Children, err = recursiveGetChildren(client, block.ID)
+		case notion.BlockTypeBulletedListItem:
+			block.BulletedListItem.Children, err = recursiveGetChildren(client, block.ID)
+		case notion.BlockTypeNumberedListItem:
+			block.NumberedListItem.Children, err = recursiveGetChildren(client, block.ID)
+		case notion.BlockTypeTable:
+			block.Table.Children, err = recursiveGetChildren(client, block.ID)
 		}
 
 		if err != nil {
@@ -131,17 +127,18 @@ func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (
 		}
 	}
 
-	return
+	return blocks, nil
 }
 
 func ParseAndGenerate(config notion_blog.BlogConfig) error {
-	client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_SECRET")))
+	// client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_SECRET")))
+	client := notion.NewClient(os.Getenv("NOTION_SECRET"))
 
 	spin := spinner.StartNew("Querying Notion database")
-	q, err := client.Database.Query(context.Background(), notionapi.DatabaseID(config.DatabaseID),
-		&notionapi.DatabaseQueryRequest{
-			CompoundFilter: filterFromConfig(config),
-			PageSize:       100,
+	q, err := client.QueryDatabase(context.Background(), config.DatabaseID,
+		&notion.DatabaseQuery{
+			Filter:   filterFromConfig(config),
+			PageSize: 100,
 		})
 	spin.Stop()
 	if err != nil {
@@ -158,12 +155,12 @@ func ParseAndGenerate(config notion_blog.BlogConfig) error {
 	changed := 0
 
 	for i, res := range q.Results {
-		title := notion_blog.ConvertRichText(res.Properties["Name"].(*notionapi.TitleProperty).Title)
+		title := tomarkdown.ConvertRichText(res.Properties.(notion.DatabasePageProperties)["Name"].Title)
 
 		fmt.Printf("-- Article [%d/%d] --\n", i+1, len(q.Results))
 		spin = spinner.StartNew("Getting blocks tree")
 		// Get page blocks tree
-		blocks, err := recursiveGetChildren(client, notionapi.BlockID(res.ID))
+		blocks, err := recursiveGetChildren(client, res.ID)
 		spin.Stop()
 		if err != nil {
 			log.Println("❌ Getting blocks tree:", err)

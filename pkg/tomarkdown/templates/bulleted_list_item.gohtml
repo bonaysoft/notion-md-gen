@@ -1,0 +1,8 @@
+- {{ rich2md .BulletedListItem.Text -}}
+{{range $child := .BulletedListItem.Children }}
+    {{if $child.BulletedListItem }}- {{ rich2md $child.BulletedListItem.Text -}}
+    {{ range $cchild := $child.BulletedListItem.Children }}
+        {{if $cchild.BulletedListItem }}- {{ rich2md $cchild.BulletedListItem.Text -}}{{end}}
+    {{- end -}}
+    {{- end}}
+{{- end}}

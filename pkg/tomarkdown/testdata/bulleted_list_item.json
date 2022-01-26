@@ -1,0 +1,53 @@
+[
+  {
+    "type": "bulleted_list_item",
+    "bulleted_list_item": {
+      "text": [
+        {
+          "type": "text",
+          "text": {
+            "content": "Lacinato kale",
+            "link": null
+          }
+        }
+      ],
+      "children": [
+        {
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Lacinato kale",
+                  "link": null
+                }
+              }
+            ],
+            "children": [
+              {
+                "type": "bulleted_list_item",
+                "bulleted_list_item": {
+                  "text": [
+                    {
+                      "type": "text",
+                      "text": {
+                        "content": "Lacinato kale",
+                        "link": null
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "paragraph"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

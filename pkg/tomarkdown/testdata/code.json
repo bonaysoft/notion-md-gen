@@ -1,0 +1,14 @@
+[
+  {
+    "type": "code",
+    "code": {
+      "text": [{
+        "type": "text",
+        "text": {
+          "content": "const a = 3"
+        }
+      }],
+      "language": "javascript"
+    }
+  }
+]

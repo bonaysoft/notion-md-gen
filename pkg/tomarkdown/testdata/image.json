@@ -1,0 +1,20 @@
+[
+  {
+    "type": "image",
+    "image": {
+      "type": "external",
+      "external": {
+        "url": "https://website.domain/images/image.png"
+      }
+    }
+  },
+  {
+    "type": "image",
+    "image": {
+      "type": "file",
+      "file": {
+        "url": "https://website.domain/images/image1.png"
+      }
+    }
+  }
+]
