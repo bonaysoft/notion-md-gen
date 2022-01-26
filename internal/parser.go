@@ -107,6 +107,10 @@ func recursiveGetChildren(client *notionapi.Client, blockID notionapi.BlockID) (
 	}
 
 	for _, block := range blocks {
+		if !block.GetHasChildren() {
+			continue
+		}
+
 		switch b := block.(type) {
 		case *notionapi.ParagraphBlock:
 			b.Paragraph.Children, err = recursiveGetChildren(client, b.ID)

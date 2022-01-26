@@ -4,7 +4,7 @@ go 1.17
 
 replace github.com/jomei/notionapi => github.com/saltbo/notionapi v1.7.3-0.20220125123013-40e934232fa4
 
-// replace github.com/jomei/notionapi => ../notionapi
+ //replace github.com/jomei/notionapi => ../notionapi
 
 require (
 	github.com/itzg/go-flagsfiller v1.9.0
