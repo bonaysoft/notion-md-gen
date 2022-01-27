@@ -2,9 +2,12 @@ module notion-md-gen
 
 go 1.17
 
-replace github.com/dstotijn/go-notion => ../go-notion
+replace github.com/dstotijn/go-notion => github.com/saltbo/go-notion v0.5.1-0.20220127001707-01bc82ce26a8
+
+//replace github.com/dstotijn/go-notion => ../go-notion
 
 require (
+	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/dstotijn/go-notion v0.5.0
 	github.com/itzg/go-flagsfiller v1.9.0
 	github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394
@@ -14,12 +17,12 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.10.0
 	github.com/stretchr/testify v1.7.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
-	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/google/uuid v1.1.2 // indirect
@@ -33,7 +36,6 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
@@ -45,6 +47,5 @@ require (
 	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
