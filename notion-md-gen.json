@@ -6,5 +6,6 @@
 	"filterProp": "Status",
 	"filterValue": ["Finished ✅","Published 🖨"],
 	"publishedValue": "Published 🖨",
-	"useShortcodes": true
+	"useShortcodes": true,
+	"shortCodesTarget": "vuepress"
 }

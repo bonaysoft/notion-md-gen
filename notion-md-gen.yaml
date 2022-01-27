@@ -2,14 +2,11 @@ databaseID: ''
 imagesLink: "/images/posts"
 imagesFolder: "./example/static/images/posts"
 contentFolder: "./example/posts"
-archetypeFile: "./example/blog.template"
-propertyTitle: Title
-propertyDescription: Description
-propertyTags: Tags
-propertyCategories: Categories
+#archetypeFile: "./example/blog.template" # optional, you can inject something by the template
 filterProp: Status
 filterValue:
   - "Finished ✅"
   - "Published 🖨"
 publishedValue: "Published 🖨"
-useShortcodes: true
+#useShortcodes: true
+#shortCodesTarget: hugo  # support hugo,hexo,vuepress

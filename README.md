@@ -2,7 +2,6 @@
 
 `notion-md-gen` allows you to use Notion as a CMS for pages built with any static site generators. You can use it as a cli or even automate your blog repo to update itself with the Github Action.
 
-
 ## Requisites
 
 - Notion database for your articles.
@@ -13,10 +12,6 @@
 ```bash
 brew install notion-md-gen
 ```
-
-> abc
-> > aaa
-> > > aaa
 
 ## Usage
 
