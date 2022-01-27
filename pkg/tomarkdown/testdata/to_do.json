@@ -1,6 +1,7 @@
 [
   {
     "type": "to_do",
+    "has_children": true,
     "to_do": {
       "text": [
         {
@@ -15,6 +16,7 @@
       "children": [
         {
           "type": "to_do",
+          "has_children": true,
           "to_do": {
             "text": [
               {
@@ -29,6 +31,7 @@
             "children": [
               {
                 "type": "to_do",
+                "has_children": true,
                 "to_do": {
                   "text": [
                     {
@@ -49,6 +52,7 @@
               },
               {
                 "type": "to_do",
+                "has_children": true,
                 "to_do": {
                   "text": [
                     {
@@ -69,6 +73,7 @@
               },
               {
                 "type": "to_do",
+                "has_children": true,
                 "to_do": {
                   "text": [
                     {
@@ -95,6 +100,7 @@
   },
   {
     "type": "to_do",
+    "has_children": true,
     "to_do": {
       "text": [
         {
@@ -109,6 +115,7 @@
       "children": [
         {
           "type": "to_do",
+          "has_children": true,
           "to_do": {
             "text": [
               {

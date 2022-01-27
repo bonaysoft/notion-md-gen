@@ -1,6 +1,0 @@
-{{range $idx, $rowBlock := .Table.Children}}
-    {{- range $rowBlock.TableRow.Cells }}| {{rich2md .}} {{ end -}}|{{"\n"}}
-    {{- if eq $idx 0 }}
-        {{- range $rowBlock.TableRow.Cells}}| :-----: {{end}}|{{"\n"}}
-    {{- end -}}
-{{end}}

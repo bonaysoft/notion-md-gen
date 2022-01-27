@@ -1,7 +1,2 @@
 > {{ rich2md .Quote.Text }}
-{{- range $child := .Quote.Children}}
-    {{- "\n"}}>> {{ rich2md $child.Quote.Text }}
-    {{- range $cchild := $child.Quote.Children}}
-        {{- "\n"}}>>> {{ rich2md $cchild.Quote.Text }}
-    {{- end}}
-{{- end}}
+

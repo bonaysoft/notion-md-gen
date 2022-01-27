@@ -4,7 +4,7 @@
     "image": {
       "type": "external",
       "external": {
-        "url": "https://website.domain/images/image.png"
+        "url": "https://www.notion.so/images/page-cover/solid_beige.png"
       }
     }
   },
@@ -13,7 +13,7 @@
     "image": {
       "type": "file",
       "file": {
-        "url": "https://website.domain/images/image1.png"
+        "url": "https://www.notion.so/images/page-cover/solid_beige.png"
       }
     }
   }

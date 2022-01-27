@@ -1,0 +1,21 @@
+{{if not .Extra.ExtendedSyntaxEnabled}}
+    {{- "["}}{{.Extra.Title}}]({{.Bookmark.URL}})
+{{else}}
+    {{- if eq .Extra.ExtendedSyntaxTarget "hugo"}}
+        {{- "{{% bookmark url=\""}}{{.Bookmark.URL}}{{"\" img=\""}}{{.Extra.Image}}{{"\" titile=\""}}{{.Extra.Title}}{{"\" %}}\n"}}
+        {{- .Extra.Description}}{{"\n"}}
+        {{- "{{% /bookmark %}}"}}
+    {{end}}
+
+    {{- if eq .Extra.ExtendedSyntaxTarget "hexo"}}
+        {{- "{% bookmark "}}{{.Bookmark.URL}} {{.Extra.Image}} {{.Extra.Title}}{{" %}\n"}}
+        {{- .Extra.Description}}{{"\n"}}
+        {{- "{% endbookmark %}"}}
+    {{end}}
+
+    {{- if eq .Extra.ExtendedSyntaxTarget "vuepress"}}
+        {{- "::: bookmark " }}{{.Bookmark.URL}} {{.Extra.Image}} {{.Extra.Title}}{{"\n"}}
+        {{- .Extra.Description}}{{"\n"}}
+        {{- ":::"}}
+    {{end}}
+{{end}}

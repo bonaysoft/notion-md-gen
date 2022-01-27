@@ -7,14 +7,14 @@ import (
 	"os"
 	"strings"
 
+	"notion-md-gen/pkg/config"
+	"notion-md-gen/pkg/generator"
+
 	"github.com/itzg/go-flagsfiller"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-
-	"notion-md-gen/internal"
-	notion_blog "notion-md-gen/pkg"
 )
 
 var cfgFile string
@@ -26,12 +26,12 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		var config notion_blog.BlogConfig
+		var config config.BlogConfig
 		if err := viper.Unmarshal(&config); err != nil {
 			log.Fatal(err)
 		}
 
-		if err := internal.ParseAndGenerate(config); err != nil {
+		if err := generator.Run(config); err != nil {
 			log.Println(err)
 		}
 	},
@@ -52,7 +52,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is notion-md-gen.yaml)")
 
 	// fill and map struct fields to flags
-	var config notion_blog.BlogConfig
+	var config config.BlogConfig
 	filler := flagsfiller.New()
 	if err := filler.Fill(flag.CommandLine, &config); err != nil {
 		log.Fatal(err)
