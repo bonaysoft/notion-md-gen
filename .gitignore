@@ -2,9 +2,7 @@
 .idea
 *.log
 tmp/
-.env
 build
 bin/
 web/
-example/posts
-example/static
+.env

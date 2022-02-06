@@ -23,8 +23,8 @@ jobs:
         with:
           database-id: 'f887dfac795547ff97a81bb669b1052f'
           content-folder: web/content
-          images-folder: web/static/images/posts
-          images-link: /images/posts
+          images-folder: web/static/images/notion
+          images-link: /images/notion
           archetype-file: web/themes/bookworm-light/archetypes/blog.md
           property-description: "Description"
           property-tags: "Tags"

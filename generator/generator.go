@@ -9,20 +9,19 @@ import (
 	"strings"
 	"time"
 
-	"notion-md-gen/pkg/config"
 	"notion-md-gen/pkg/tomarkdown"
 
 	"github.com/dstotijn/go-notion"
 )
 
-func Run(config config.BlogConfig) error {
-	if err := os.MkdirAll(config.ContentFolder, 0777); err != nil {
+func Run(config Config) error {
+	if err := os.MkdirAll(config.Markdown.PostSavePath, 0755); err != nil {
 		return fmt.Errorf("couldn't create content folder: %s", err)
 	}
 
 	// find database page
 	client := notion.NewClient(os.Getenv("NOTION_SECRET"))
-	q, err := queryDatabase(client, config)
+	q, err := queryDatabase(client, config.Notion)
 	if err != nil {
 		return fmt.Errorf("❌ Querying Notion database: %s", err)
 	}
@@ -42,14 +41,14 @@ func Run(config config.BlogConfig) error {
 		fmt.Println("✔ Getting blocks tree: Completed")
 
 		// Generate content to file
-		if err := generate(page, blocks, config); err != nil {
+		if err := generate(page, blocks, config.Markdown); err != nil {
 			fmt.Println("❌ Generating blog post:", err)
 			continue
 		}
 		fmt.Println("✔ Generating blog post: Completed")
 
 		// Change status of blog post if desired
-		if changeStatus(client, page, config) {
+		if changeStatus(client, page, config.Notion) {
 			changed++
 		}
 	}
@@ -63,28 +62,28 @@ func Run(config config.BlogConfig) error {
 	return nil
 }
 
-func generate(page notion.Page, blocks []notion.Block, config config.BlogConfig) error {
+func generate(page notion.Page, blocks []notion.Block, config Markdown) error {
 	// Create file
 	pageName := tomarkdown.ConvertRichText(page.Properties.(notion.DatabasePageProperties)["Name"].Title)
-	f, err := os.Create(filepath.Join(config.ContentFolder, generateArticleFilename(pageName, page.CreatedTime, config)))
+	f, err := os.Create(filepath.Join(config.PostSavePath, generateArticleFilename(pageName, page.CreatedTime, config)))
 	if err != nil {
 		return fmt.Errorf("error create file: %s", err)
 	}
 
 	// Generate markdown content to the file
 	tm := tomarkdown.New()
-	tm.ImgSavePath = filepath.Join(config.ImagesFolder, pageName)
-	tm.ImgVisitPath = filepath.Join(config.ImagesLink, url.PathEscape(pageName))
-	tm.ContentTemplate = config.ArchetypeFile
+	tm.ImgSavePath = filepath.Join(config.ImageSavePath, pageName)
+	tm.ImgVisitPath = filepath.Join(config.ImagePublicLink, url.PathEscape(pageName))
+	tm.ContentTemplate = config.Template
 	tm.WithFrontMatter(page)
-	if config.UseShortcodes {
-		tm.EnableExtendedSyntax(config.ShortCodesTarget)
+	if config.ShortcodeSyntax != "" {
+		tm.EnableExtendedSyntax(config.ShortcodeSyntax)
 	}
 
 	return tm.GenerateTo(page, blocks, f)
 }
 
-func generateArticleFilename(title string, date time.Time, config config.BlogConfig) string {
+func generateArticleFilename(title string, date time.Time, config Markdown) string {
 	escapedTitle := strings.ReplaceAll(
 		strings.ToValidUTF8(
 			strings.ToLower(title),
@@ -94,9 +93,9 @@ func generateArticleFilename(title string, date time.Time, config config.BlogCon
 	)
 	escapedFilename := escapedTitle + ".md"
 
-	if config.UseDateForFilename {
-		// Add date to the name to allow repeated titles
-		return date.Format("2006-01-02") + escapedFilename
+	if config.GroupByMonth {
+		return filepath.Join(date.Format("2006-01-02"), escapedFilename)
 	}
+
 	return escapedFilename
 }

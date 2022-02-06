@@ -4,13 +4,11 @@ import (
 	"context"
 	"log"
 
-	"notion-md-gen/pkg/config"
-
 	"github.com/dstotijn/go-notion"
 	"github.com/janeczku/go-spinner"
 )
 
-func filterFromConfig(config config.BlogConfig) *notion.DatabaseQueryFilter {
+func filterFromConfig(config Notion) *notion.DatabaseQueryFilter {
 	if config.FilterProp == "" || len(config.FilterValue) == 0 {
 		return nil
 	}
@@ -30,8 +28,8 @@ func filterFromConfig(config config.BlogConfig) *notion.DatabaseQueryFilter {
 	}
 }
 
-func queryDatabase(client *notion.Client, config config.BlogConfig) (notion.DatabaseQueryResponse, error) {
-	spin := spinner.StartNew("Querying Notion database")
+func queryDatabase(client *notion.Client, config Notion) (notion.DatabaseQueryResponse, error) {
+	spin := spinner.StartNew("Querying Notion database " + config.DatabaseID)
 	defer spin.Stop()
 
 	query := &notion.DatabaseQuery{
@@ -91,7 +89,7 @@ func retrieveBlockChildren(client *notion.Client, blockID string) (blocks []noti
 
 // changeStatus changes the Notion article status to the published value if set.
 // It returns true if status changed.
-func changeStatus(client *notion.Client, p notion.Page, config config.BlogConfig) bool {
+func changeStatus(client *notion.Client, p notion.Page, config Notion) bool {
 	// No published value or filter prop to change
 	if config.FilterProp == "" || config.PublishedValue == "" {
 		return false

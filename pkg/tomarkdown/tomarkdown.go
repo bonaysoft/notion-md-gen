@@ -16,7 +16,7 @@ import (
 	"github.com/Masterminds/sprig"
 	"github.com/dstotijn/go-notion"
 	"github.com/otiai10/opengraph"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 //go:embed templates

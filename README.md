@@ -22,7 +22,7 @@ cd your-blog-dir
 notion-md-gen
 ```
 
-The binary looks for a config file called `notion-md-gen.json` or `notion-md-gen.yaml` in the directory where it is executed. You can see the example config in [notion-md-gen.json](notion-md-gen.json).
+The binary looks for a config file called `notion-md-gen.yml` in the directory where it is executed. You can see the example config in [notion-md-gen.yml](notion-md-gen.yml).
 
 ### Github Action
 

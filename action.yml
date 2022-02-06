@@ -1,58 +1,9 @@
 name: notion-md-gen
-author: xzebra
-description: Notion blog articles database to hugo-style markdown.
+author: saltbo
+description: Convert notion content to markdown for any static blog.
 branding:
   icon: inbox
   color: black
-
-inputs:
-  database-id:
-    description: ID of the Notion database of the blog.
-    required: true
-  content-folder:
-    description: Directory in which the hugo content will be generated.
-    required: true
-  archetype-file:
-    description: Route to the archetype file to generate the header.
-    required: true
-  images-folder:
-    description: Directory in which the static images will be stored.
-    required: true
-  images-link:
-    description: URL beggining to link the static images.
-    required: true
-  property-description:
-    description: Description property name in Notion.
-    required: false
-    default: ''
-  property-tags:
-    description: Tags multi-select porperty name in Notion.
-    required: false
-    default: ''
-  property-categories:
-    description: Categories multi-select porperty name in Notion.
-    required: false
-    default: ''
-  filter-prop:
-    description: Property of the filter to apply to a select value of the articles.
-    required: false
-    default: ''
-  filter-value:
-    description: Values of the filter to apply to the Notion articles database.
-    required: false
-    default: ''
-  published-value:
-    description: Value to which the filter property will be set after generating the content.
-    required: false
-    default: ''
-  use-date-for-filename:
-    description: Use the creation date to generate the post filename.
-    required: false
-    default: "false"
-  use-shortcodes:
-    description: True if you want to generate shortcodes for unimplemented markdown blocks, such as callout or quote.
-    required: false
-    default: "false"
 
 runs:
   using: 'docker'

@@ -7,6 +7,6 @@ notion:
   publishedValue: Published 🖨
 markdown:
   shortcodeSyntax: vuepress
-  postSavePath: example/posts/notion
-  imageSavePath: example/static/images/posts
+  postSavePath: posts/notion
+  imageSavePath: static/images/posts
   imagePublicLink: /images/posts
