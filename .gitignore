@@ -3,6 +3,7 @@
 *.log
 tmp/
 .env
+build
 bin/
 web/
 example/posts

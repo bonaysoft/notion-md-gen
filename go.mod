@@ -2,13 +2,9 @@ module notion-md-gen
 
 go 1.17
 
-replace github.com/dstotijn/go-notion => github.com/saltbo/go-notion v0.5.1-0.20220127001707-01bc82ce26a8
-
-//replace github.com/dstotijn/go-notion => ../go-notion
-
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
-	github.com/dstotijn/go-notion v0.5.0
+	github.com/dstotijn/go-notion v0.6.0
 	github.com/itzg/go-flagsfiller v1.9.0
 	github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394
 	github.com/joho/godotenv v1.4.0

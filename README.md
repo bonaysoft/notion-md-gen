@@ -8,7 +8,7 @@
 - Notion API secret token.
 - A blog by any static site generators.
 
-## Setup
+## Setup(not ready)
 ```bash
 brew install notion-md-gen
 ```
@@ -28,13 +28,13 @@ The binary looks for a config file called `notion-md-gen.json` or `notion-md-gen
 
 To use it as a Github Action, you can follow the example of the repository in [.github/worflows/notion.yml](.github/workflows/notion.yml).
 
-## Compilation
+## Contributing
+See [CONTRIBUTING](CONTRIBUTING.md) for details on submitting patches and the contribution workflow.
 
-This is only required if you are not going to use the repo as a Github Action. The compilation is simple as Golang installs everything for you.
+## Special thanks
+- [xzebra](https://github.com/xzebra)
 
-```bash
-go build -o ./bin/main cmd/main/main.go
-```
+I based this code on [https://github.com/xzebra/notion-blog](https://github.com/xzebra/notion-blog/commit/7982bcf0445cfdca1efd250d1f76d9fee07fc975)
 
-You can compile any form of the app (cli or binary) by compiling the main file in any of the packages in `cmd/`.
-
+## License
+notion-md-gen is under the MIT license. See the [LICENSE](/LICENSE) file for details.
