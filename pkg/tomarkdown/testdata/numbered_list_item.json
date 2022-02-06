@@ -1,0 +1,74 @@
+[
+  {
+    "type": "numbered_list_item",
+    "has_children": true,
+    "numbered_list_item": {
+      "text": [
+        {
+          "type": "text",
+          "text": {
+            "content": "Lacinato kale",
+            "link": null
+          }
+        }
+      ],
+      "children": [
+        {
+          "type": "numbered_list_item",
+          "has_children": true,
+          "numbered_list_item": {
+            "text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Lacinato kale",
+                  "link": null
+                }
+              }
+            ],
+            "children": [
+              {
+                "type": "numbered_list_item",
+                "has_children": true,
+                "numbered_list_item": {
+                  "text": [
+                    {
+                      "type": "text",
+                      "text": {
+                        "content": "Lacinato kale",
+                        "link": null
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "paragraph"
+                    }
+                  ]
+                }
+              },{
+                "type": "numbered_list_item",
+                "numbered_list_item": {
+                  "text": [
+                    {
+                      "type": "text",
+                      "text": {
+                        "content": "Lacinato kale",
+                        "link": null
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "paragraph"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

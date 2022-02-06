@@ -1,0 +1,20 @@
+[
+  {
+    "type": "image",
+    "image": {
+      "type": "external",
+      "external": {
+        "url": "https://www.notion.so/images/page-cover/solid_beige.png"
+      }
+    }
+  },
+  {
+    "type": "image",
+    "image": {
+      "type": "file",
+      "file": {
+        "url": "https://www.notion.so/images/page-cover/solid_beige.png"
+      }
+    }
+  }
+]

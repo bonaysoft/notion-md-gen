@@ -1,0 +1,1 @@
+![{{ rich2md .Image.Caption }}]({{ if eq .Image.Type "external" }}{{.Image.External.URL}}{{else}}{{.Image.File.URL}}){{end}}

@@ -1,0 +1,1 @@
+{{if gt .Depth 0}}{{"    " | repeat .Depth}}{{end}}{{add .Extra.SameBlockIdx 1}}. {{ rich2md .NumberedListItem.Text }}

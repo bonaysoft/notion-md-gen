@@ -1,27 +1,51 @@
-module notion-blog
+module notion-md-gen
 
 go 1.17
 
-replace github.com/jomei/notionapi => github.com/xzebra/notionapi v1.5.1-0.20211019063545-d541edbcd60c
+replace github.com/dstotijn/go-notion => github.com/saltbo/go-notion v0.5.1-0.20220127001707-01bc82ce26a8
 
-// replace github.com/jomei/notionapi => ../notionapi
+//replace github.com/dstotijn/go-notion => ../go-notion
 
 require (
-	github.com/briandowns/spinner v1.16.0
-	github.com/itzg/go-flagsfiller v1.5.0
+	github.com/Masterminds/sprig v2.22.0+incompatible
+	github.com/dstotijn/go-notion v0.5.0
+	github.com/itzg/go-flagsfiller v1.9.0
 	github.com/janeczku/go-spinner v0.0.0-20150530144529-cf8ef1d64394
 	github.com/joho/godotenv v1.4.0
-	github.com/jomei/notionapi v1.5.3-0.20211015052055-e3eaeddd589f
 	github.com/otiai10/opengraph v1.1.3
+	github.com/spf13/cobra v1.3.0
+	github.com/spf13/pflag v1.0.5
+	github.com/spf13/viper v1.10.0
+	github.com/stretchr/testify v1.7.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
-	github.com/fatih/color v1.7.0 // indirect
-	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334 // indirect
-	github.com/mattn/go-colorable v0.1.2 // indirect
-	github.com/mattn/go-isatty v0.0.8 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
-	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2 // indirect
-	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
-	golang.org/x/sys v0.0.0-20210423082822-04245dca01da // indirect
+	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/Masterminds/semver v1.5.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/google/uuid v1.1.2 // indirect
+	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/huandu/xstrings v1.3.2 // indirect
+	github.com/iancoleman/strcase v0.2.0 // indirect
+	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/magiconair/properties v1.8.5 // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/mitchellh/mapstructure v1.4.3 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
+	github.com/pelletier/go-toml v1.9.4 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/spf13/afero v1.6.0 // indirect
+	github.com/spf13/cast v1.4.1 // indirect
+	github.com/spf13/jwalterweatherman v1.1.0 // indirect
+	github.com/subosito/gotenv v1.2.0 // indirect
+	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
+	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
+	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
+	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
+	golang.org/x/text v0.3.7 // indirect
+	gopkg.in/ini.v1 v1.66.2 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

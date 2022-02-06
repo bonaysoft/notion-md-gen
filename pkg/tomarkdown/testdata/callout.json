@@ -1,0 +1,18 @@
+[
+  {
+    "type": "callout",
+    "callout": {
+      "text": [
+        {
+          "type": "text",
+          "text": {
+            "content": "Lacinato kale"
+          }
+        }
+      ],
+      "icon": {
+        "emoji": "⭐"
+      }
+    }
+  }
+]

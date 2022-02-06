@@ -2,9 +2,9 @@ FROM golang:1.17-alpine
 
 RUN apk add --no-cache git
 
-LABEL "com.github.actions.name"="notion-blog"
+LABEL "com.github.actions.name"="notion-md-gen"
 LABEL "com.github.actions.description"="Notion blog articles database to hugo-style markdown."
-LABEL "repository"="https://github.com/xzebra/notion-blog"
+LABEL "repository"="https://github.com/xzebra/notion-md-gen"
 LABEL "maintainer"="xzebra <zebrv.apps@gmail.com>"
 
 WORKDIR /usr/src/app
@@ -18,6 +18,6 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o ./bin/cli cmd/cli/main.go
+RUN go build -o ./bin/notion-md-gen main.go
 
-ENTRYPOINT ["/usr/src/app/bin/cli"]
+ENTRYPOINT ["/usr/src/app/bin/notion-md-gen"]
