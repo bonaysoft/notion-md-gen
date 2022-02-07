@@ -33,13 +33,13 @@ brew install notion-md-gen
 
 ```bash
 cd your-blog-dir
+notion-md-gen init
 notion-md-gen
 ```
 
-The binary looks for a config file called `notion-md-gen.yml` in the directory where it is executed. You can see the
-example config in [notion-md-gen.yml](notion-md-gen.yml).
-
 ### Github Action
+
+> The installation command tool is helpful for local debugging. If you do not want to debug locally, you can also copy the configuration file to your project and run it directly through GitHubAction. You can see the example config in [example/notion-md-gen.yaml](example/notion-md-gen.yaml).
 
 To use it as a Github Action, you can follow the example of the repository
 in [.github/worflows/notion.yml](.github/workflows/notion.yml).
