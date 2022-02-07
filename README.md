@@ -1,6 +1,7 @@
 # notion-md-gen
 
 [![](https://github.com/bonaysoft/notion-md-gen/workflows/build/badge.svg)](https://github.com/bonaysoft/notion-md-gen/actions?query=workflow%3Abuild)
+[![codecov](https://codecov.io/gh/bonaysoft/notion-md-gen/branch/master/graph/badge.svg?token=XHG00YHOJF)](https://codecov.io/gh/bonaysoft/notion-md-gen)
 [![](https://img.shields.io/github/v/release/bonaysoft/notion-md-gen.svg)](https://github.com/bonaysoft/notion-md-gen/releases)
 [![](https://img.shields.io/github/license/bonaysoft/notion-md-gen.svg)](https://github.com/bonaysoft/notion-md-gen/blob/master/LICENSE)
 
