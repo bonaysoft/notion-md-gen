@@ -1,5 +1,4 @@
 # notion-md-gen
-===================================
 
 [![](https://github.com/bonaysoft/notion-md-gen/workflows/build/badge.svg)](https://github.com/bonaysoft/notion-md-gen/actions?query=workflow%3Abuild)
 [![](https://img.shields.io/github/v/release/bonaysoft/notion-md-gen.svg)](https://github.com/bonaysoft/notion-md-gen/releases)
