@@ -15,6 +15,12 @@ cli or even automate your blog repo to update itself with the Github Action.
 
 ## Setup
 
+### install.sh
+
+```bash
+curl -sSf https://raw.githubusercontent.com/bonaysoft/notion-md-gen/master/install.sh | sh
+```
+
 ### webi (not ready)
 
 ```bash
