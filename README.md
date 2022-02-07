@@ -15,12 +15,6 @@ cli or even automate your blog repo to update itself with the Github Action.
 
 ## Setup
 
-### install.sh
-
-```bash
-curl -sSf https://dl.saltbo.cn/install.sh | sh -s notion-md-gen
-```
-
 ### webi (not ready)
 
 ```bash
