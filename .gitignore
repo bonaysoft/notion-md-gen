@@ -7,3 +7,4 @@ bin/
 web/
 .env
 .coverprofile
+notion-md-gen.yaml
