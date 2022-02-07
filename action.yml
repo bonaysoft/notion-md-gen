@@ -1,4 +1,4 @@
-name: notion-md-gen
+name: notion-md-gen Action
 author: saltbo
 description: Convert notion content to markdown for any static blog.
 branding:
