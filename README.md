@@ -1,5 +1,6 @@
 # notion-md-gen
 ===================================
+
 [![](https://github.com/bonaysoft/notion-md-gen/workflows/build/badge.svg)](https://github.com/bonaysoft/notion-md-gen/actions?query=workflow%3Abuild)
 [![](https://img.shields.io/github/v/release/bonaysoft/notion-md-gen.svg)](https://github.com/bonaysoft/notion-md-gen/releases)
 [![](https://img.shields.io/github/license/bonaysoft/notion-md-gen.svg)](https://github.com/bonaysoft/notion-md-gen/blob/master/LICENSE)
@@ -14,12 +15,6 @@ cli or even automate your blog repo to update itself with the Github Action.
 - A blog by any static site generators.
 
 ## Setup
-
-### install.sh
-
-```bash
-curl -sSf https://dl.saltbo.cn/install.sh | sh -s notion-md-gen
-```
 
 ### webi (not ready)
 
