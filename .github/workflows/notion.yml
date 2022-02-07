@@ -19,19 +19,7 @@ jobs:
           # ref: ${{ github.head_ref }}
 
       - name: notion-md-gen
-        uses: xzebra/notion-md-gen@master
-        with:
-          database-id: 'f887dfac795547ff97a81bb669b1052f'
-          content-folder: web/content
-          images-folder: web/static/images/notion
-          images-link: /images/notion
-          archetype-file: web/themes/bookworm-light/archetypes/blog.md
-          property-description: "Description"
-          property-tags: "Tags"
-          property-categories: "Categories"
-          filter-prop: 'Status'
-          filter-value: 'Finished ✅'
-          published-value: 'Published 🖨'
+        uses: bonaysoft/notion-md-gen@master
         env:
           # You need to generate an Integration token in Notion API page
           NOTION_SECRET : ${{ secrets.NOTION_SECRET }}
@@ -41,7 +29,7 @@ jobs:
         # better look to the Markdown.
         uses: creyD/prettier_action@v3.1
         with:
-          prettier_options: --write ./web/content/**/*.md
+          prettier_options: --write ./example/posts/**/*.md
           commit_message: 'notion-md-gen: update articles (auto)'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
