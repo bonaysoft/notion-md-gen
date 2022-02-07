@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"notion-md-gen/generator"
+	"github.com/bonaysoft/notion-md-gen/generator"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"

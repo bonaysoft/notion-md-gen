@@ -1,4 +1,4 @@
-module notion-md-gen
+module github.com/bonaysoft/notion-md-gen
 
 go 1.17
 

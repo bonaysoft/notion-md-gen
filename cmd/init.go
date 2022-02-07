@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"notion-md-gen/generator"
+	"github.com/bonaysoft/notion-md-gen/generator"
 
 	"github.com/spf13/cobra"
 )
