@@ -6,3 +6,4 @@ build
 bin/
 web/
 .env
+.coverprofile

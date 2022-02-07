@@ -1,0 +1,41 @@
+dist: ./build/release
+before:
+  hooks:
+    - go mod download
+builds:
+  - id: nmg
+    main: ./main.go
+    ldflags:
+      - -s -w
+      - -X github.com/bonaysoft/{{ .ProjectName }}/cmd.release={{.Version}}
+      - -X github.com/bonaysoft/{{ .ProjectName }}/cmd.commit={{.Commit}}
+      - -X github.com/bonaysoft/{{ .ProjectName }}/cmd.repo={{.GitURL}}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+
+archives:
+  - name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    replacements:
+      darwin: macos
+    format: tar.gz
+    format_overrides: # archive as zip on Windows
+      - goos: windows
+        format: zip
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: desc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

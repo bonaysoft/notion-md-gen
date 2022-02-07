@@ -3,10 +3,13 @@ package generator
 import (
 	"context"
 	"log"
+	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/dstotijn/go-notion"
-	"github.com/janeczku/go-spinner"
 )
+
+var spin = spinner.New(spinner.CharSets[14], time.Millisecond*100)
 
 func filterFromConfig(config Notion) *notion.DatabaseQueryFilter {
 	if config.FilterProp == "" || len(config.FilterValue) == 0 {
@@ -29,7 +32,8 @@ func filterFromConfig(config Notion) *notion.DatabaseQueryFilter {
 }
 
 func queryDatabase(client *notion.Client, config Notion) (notion.DatabaseQueryResponse, error) {
-	spin := spinner.StartNew("Querying Notion database " + config.DatabaseID)
+	spin.Suffix = " Querying Notion database..."
+	spin.Start()
 	defer spin.Stop()
 
 	query := &notion.DatabaseQuery{
@@ -40,7 +44,8 @@ func queryDatabase(client *notion.Client, config Notion) (notion.DatabaseQueryRe
 }
 
 func queryBlockChildren(client *notion.Client, blockID string) (blocks []notion.Block, err error) {
-	spin := spinner.StartNew("Getting blocks tree")
+	spin.Suffix = " Fetching blocks tree..."
+	spin.Start()
 	defer spin.Stop()
 	return retrieveBlockChildren(client, blockID)
 }

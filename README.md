@@ -1,4 +1,8 @@
 # notion-md-gen
+---
+[![](https://github.com/bonaysoft/notion-md-gen/workflows/build/badge.svg)](https://github.com/bonaysoft/notion-md-gen/actions?query=workflow%3Abuild)
+[![](https://img.shields.io/github/v/release/bonaysoft/notion-md-gen.svg)](https://github.com/bonaysoft/notion-md-gen/releases)
+[![](https://img.shields.io/github/license/bonaysoft/notion-md-gen.svg)](https://github.com/bonaysoft/notion-md-gen/blob/master/LICENSE)
 
 `notion-md-gen` allows you to use Notion as a CMS for pages built with any static site generators. You can use it as a cli or even automate your blog repo to update itself with the Github Action.
 
