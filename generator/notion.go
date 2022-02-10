@@ -50,21 +50,36 @@ func queryBlockChildren(client *notion.Client, blockID string) (blocks []notion.
 	return retrieveBlockChildren(client, blockID)
 }
 
-func retrieveBlockChildren(client *notion.Client, blockID string) (blocks []notion.Block, err error) {
-	query := &notion.PaginationQuery{
-		PageSize: 100,
-	}
-	res, err := client.FindBlockChildrenByID(context.Background(), blockID, query)
-	if err != nil {
-		return nil, err
-	}
+func retrieveBlockChildrenLoop(client *notion.Client, blockID, cursor string) (blocks []notion.Block, err error) {
+	for {
+		query := &notion.PaginationQuery{
+			StartCursor: cursor,
+			PageSize:    100,
+		}
+		res, err := client.FindBlockChildrenByID(context.Background(), blockID, query)
+		if err != nil {
+			return nil, err
+		}
 
-	blocks = res.Results
-	if len(blocks) == 0 {
+		if len(res.Results) == 0 {
+			return blocks, nil
+		}
+
+		blocks = append(blocks, res.Results...)
+		if !res.HasMore {
+			return blocks, nil
+		}
+		cursor = *res.NextCursor
+	}
+}
+
+func retrieveBlockChildren(client *notion.Client, blockID string) (blocks []notion.Block, err error) {
+	blocks, err = retrieveBlockChildrenLoop(client, blockID, "")
+	if err != nil {
 		return
 	}
 
-	for _, block := range res.Results {
+	for _, block := range blocks {
 		if !block.HasChildren {
 			continue
 		}
