@@ -32,7 +32,7 @@ func testTarget(t *testing.T, target string) {
 		tom := New()
 		tom.ImgSavePath = "/tmp/"
 		tom.EnableExtendedSyntax(target)
-		assert.NoError(t, tom.GenerateTo(notion.Page{}, blocks, os.Stdout))
+		assert.NoError(t, tom.GenerateTo(blocks, os.Stdout))
 		return nil
 	})
 }

@@ -80,7 +80,7 @@ func generate(page notion.Page, blocks []notion.Block, config Markdown) error {
 		tm.EnableExtendedSyntax(config.ShortcodeSyntax)
 	}
 
-	return tm.GenerateTo(page, blocks, f)
+	return tm.GenerateTo(blocks, f)
 }
 
 func generateArticleFilename(title string, date time.Time, config Markdown) string {

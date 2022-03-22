@@ -84,7 +84,7 @@ func (tm *ToMarkdown) shouldSkipRender(bType notion.BlockType) bool {
 	return !tm.ExtendedSyntaxEnabled() && blockTypeInExtendedSyntaxBlocks(bType)
 }
 
-func (tm *ToMarkdown) GenerateTo(page notion.Page, blocks []notion.Block, writer io.Writer) error {
+func (tm *ToMarkdown) GenerateTo(blocks []notion.Block, writer io.Writer) error {
 	if err := tm.GenFrontMatter(writer); err != nil {
 		return err
 	}
