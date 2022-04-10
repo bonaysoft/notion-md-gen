@@ -89,7 +89,7 @@ func generateArticleFilename(title string, date time.Time, config Markdown) stri
 			strings.ToLower(title),
 			"",
 		),
-		" ", "_",
+		" ", "-",
 	)
 	escapedFilename := escapedTitle + ".md"
 
