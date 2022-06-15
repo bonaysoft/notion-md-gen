@@ -65,3 +65,4 @@ on [https://github.com/xzebra/notion-blog](https://github.com/xzebra/notion-blog
 ## License
 
 notion-md-gen is under the MIT license. See the [LICENSE](/LICENSE) file for details.
+
