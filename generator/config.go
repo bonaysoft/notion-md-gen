@@ -17,6 +17,7 @@ type Notion struct {
 
 type Markdown struct {
 	ShortcodeSyntax string `yaml:"shortcodeSyntax"` // hugo,hexo,vuepress
+	PageNamePrefix  string `yaml:"pageNamePrefix"`
 	PostSavePath    string `yaml:"postSavePath"`
 	ImageSavePath   string `yaml:"imageSavePath"`
 	ImagePublicLink string `yaml:"imagePublicLink"`

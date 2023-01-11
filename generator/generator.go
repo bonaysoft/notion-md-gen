@@ -30,7 +30,8 @@ func Run(config Config) error {
 	// fetch page children
 	changed := 0 // number of article status changed
 	for i, page := range q.Results {
-		fmt.Printf("-- Article [%d/%d] --\n", i+1, len(q.Results))
+		pageName := tomarkdown.ConvertRichText(page.Properties.(notion.DatabasePageProperties)["Name"].Title)
+		fmt.Printf("-- Article [%d/%d] %s --\n", i+1, len(q.Results), pageName)
 
 		// Get page blocks tree
 		blocks, err := queryBlockChildren(client, page.ID)
@@ -64,7 +65,7 @@ func Run(config Config) error {
 
 func generate(page notion.Page, blocks []notion.Block, config Markdown) error {
 	// Create file
-	pageName := tomarkdown.ConvertRichText(page.Properties.(notion.DatabasePageProperties)["Name"].Title)
+	pageName := config.PageNamePrefix + tomarkdown.ConvertRichText(page.Properties.(notion.DatabasePageProperties)["Name"].Title)
 	f, err := os.Create(filepath.Join(config.PostSavePath, generateArticleFilename(pageName, page.CreatedTime, config)))
 	if err != nil {
 		return fmt.Errorf("error create file: %s", err)
