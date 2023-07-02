@@ -2,7 +2,6 @@ package generator
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -10,6 +9,7 @@ import (
 	"time"
 
 	"github.com/bonaysoft/notion-md-gen/pkg/tomarkdown"
+	"github.com/hashicorp/go-retryablehttp"
 
 	"github.com/dstotijn/go-notion"
 )
@@ -20,7 +20,7 @@ func Run(config Config) error {
 	}
 
 	// find database page
-	client := notion.NewClient(os.Getenv("NOTION_SECRET"))
+	client := notion.NewClient(os.Getenv("NOTION_SECRET"), notion.WithHTTPClient(retryablehttp.NewClient().StandardClient()))
 	q, err := queryDatabase(client, config.Notion)
 	if err != nil {
 		return fmt.Errorf("❌ Querying Notion database: %s", err)
@@ -36,15 +36,13 @@ func Run(config Config) error {
 		// Get page blocks tree
 		blocks, err := queryBlockChildren(client, page.ID)
 		if err != nil {
-			log.Println("❌ Getting blocks tree:", err)
-			continue
+			return fmt.Errorf("error getting blocks: %v", err)
 		}
 		fmt.Println("✔ Getting blocks tree: Completed")
 
 		// Generate content to file
 		if err := generate(page, blocks, config.Markdown); err != nil {
-			fmt.Println("❌ Generating blog post:", err)
-			continue
+			return fmt.Errorf("error generating blog post: %v", err)
 		}
 		fmt.Println("✔ Generating blog post: Completed")
 
@@ -52,12 +50,6 @@ func Run(config Config) error {
 		if changeStatus(client, page, config.Notion) {
 			changed++
 		}
-	}
-
-	// Set GITHUB_ACTIONS info variables
-	// https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions
-	if os.Getenv("GITHUB_ACTIONS") == "true" {
-		fmt.Printf("::set-output name=articles_published::%d\n", changed)
 	}
 
 	return nil
